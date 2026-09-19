@@ -201,3 +201,81 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+
+/* ============================================
+   PRINT MEDIA STYLES — Legal Documents & Statement of Account (SOA)
+   Ensures ONLY the letterhead document prints, stripping all dashboard chrome
+   ============================================ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm 15mm 15mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Strip all application navigation, headers, footers, action bars, and interactive UI */
+  header,
+  aside,
+  nav,
+  footer,
+  button,
+  .print\\:hidden,
+  .skip-link,
+  [data-print-hidden="true"],
+  [aria-hidden="true"] {
+    display: none !important;
+  }
+
+  /* Reset all scrolling and overflow wrappers so multi-page documents flow cleanly */
+  div,
+  main,
+  section {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Force printable document to span clean full width */
+  .printable-soa {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  /* Prevent page-break issues */
+  tr,
+  .print-avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  tfoot {
+    display: table-footer-group !important;
+  }
+
+  /* Suppress automatic printing of anchor link URLs */
+  a[href]:after {
+    content: none !important;
+  }
+}
+
