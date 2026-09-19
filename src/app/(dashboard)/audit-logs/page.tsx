@@ -51,15 +51,20 @@ export default async function AuditLogsPage() {
                   </span>
                 </TableCell>
                 <TableCell>
-                  <Badge
-                    variant={
-                      log.action === 'CREATE' || log.action === 'UPLOAD' ? 'success' :
-                      log.action === 'DELETE' ? 'error' :
-                      log.action === 'UPDATE' ? 'info' : 'neutral'
-                    }
-                  >
-                    {log.action}
-                  </Badge>
+                  <div className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-gray-700 whitespace-nowrap">
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                        log.action === 'CREATE' || log.action === 'UPLOAD'
+                          ? 'bg-emerald-500'
+                          : log.action === 'DELETE'
+                          ? 'bg-rose-500'
+                          : log.action === 'UPDATE'
+                          ? 'bg-blue-500'
+                          : 'bg-gray-400'
+                      }`}
+                    />
+                    <span>{log.action}</span>
+                  </div>
                 </TableCell>
                 <TableCell className="text-gray-600 text-xs font-mono">
                   {log.entityType}

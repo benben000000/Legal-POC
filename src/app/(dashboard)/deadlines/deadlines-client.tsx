@@ -106,16 +106,30 @@ export function DeadlinesClient({ deadlines, matters, userRole }: DeadlinesClien
                       {format(new Date(deadline.dueDate), 'MMM d, yyyy')}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          deadline.isCompleted ? 'success' :
-                          isOverdue ? 'error' :
-                          deadline.urgencyLevel === 'CRITICAL' ? 'error' :
-                          deadline.urgencyLevel === 'UPCOMING' ? 'warning' : 'neutral'
-                        }
-                      >
-                        {deadline.isCompleted ? 'Completed' : isOverdue ? 'Overdue' : deadline.urgencyLevel.replace('_', ' ')}
-                      </Badge>
+                      <div className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-700 whitespace-nowrap">
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                            deadline.isCompleted
+                              ? 'bg-emerald-500'
+                              : isOverdue || deadline.urgencyLevel === 'CRITICAL'
+                              ? 'bg-rose-500'
+                              : deadline.urgencyLevel === 'UPCOMING'
+                              ? 'bg-amber-500'
+                              : 'bg-gray-400'
+                          }`}
+                        />
+                        <span>
+                          {deadline.isCompleted
+                            ? 'Completed'
+                            : isOverdue
+                            ? 'Overdue'
+                            : deadline.urgencyLevel === 'UPCOMING'
+                            ? 'Upcoming'
+                            : deadline.urgencyLevel === 'CRITICAL'
+                            ? 'Critical'
+                            : 'Scheduled'}
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <Button

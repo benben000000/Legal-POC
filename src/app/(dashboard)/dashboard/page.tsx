@@ -67,7 +67,7 @@ export default async function DashboardPage() {
         <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Matters</span>
-            <Badge variant="info">Cases</Badge>
+            <span className="text-[11px] font-medium text-gray-400">Civil &amp; Criminal</span>
           </div>
           <div className="mt-3 flex items-baseline">
             <span className="text-3xl font-bold text-gray-900">{activeMattersCount}</span>
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
         <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Tasks</span>
-            <Badge variant="warning">Workflow</Badge>
+            <span className="text-[11px] font-medium text-gray-400">This Week</span>
           </div>
           <div className="mt-3 flex items-baseline">
             <span className="text-3xl font-bold text-gray-900">{totalTasksCount}</span>
@@ -89,7 +89,7 @@ export default async function DashboardPage() {
         <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Pending Deadlines</span>
-            <Badge variant="error">Rules of Court</Badge>
+            <span className="text-[11px] font-medium text-gray-400">Court Rules</span>
           </div>
           <div className="mt-3 flex items-baseline">
             <span className="text-3xl font-bold text-gray-900">{pendingDeadlinesCount}</span>
@@ -100,10 +100,13 @@ export default async function DashboardPage() {
         <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">E-Filing Status</span>
-            <Badge variant="success">Online</Badge>
+            <span className="inline-flex items-center gap-1.5 text-xs text-emerald-700 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              Operational
+            </span>
           </div>
           <div className="mt-3 flex items-baseline">
-            <span className="text-sm font-semibold text-green-700">Connected</span>
+            <span className="text-sm font-semibold text-gray-900">Connected</span>
             <span className="ml-2 text-xs text-gray-500">Supreme Court</span>
           </div>
         </div>
@@ -142,14 +145,34 @@ export default async function DashboardPage() {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Badge 
-                          variant={
-                            matter.status === 'ACTIVE' || matter.status === 'FOR_PLEADING' ? 'success' : 
-                            matter.status === 'ARCHIVED' ? 'neutral' : 'warning'
-                          }
-                        >
-                          {matter.status.replace('_', ' ')}
-                        </Badge>
+                        <div className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-700 whitespace-nowrap">
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                              matter.status === 'ACTIVE'
+                                ? 'bg-emerald-500'
+                                : matter.status === 'FOR_PLEADING'
+                                ? 'bg-blue-500'
+                                : matter.status === 'UNDER_SUBMISSION'
+                                ? 'bg-amber-500'
+                                : matter.status === 'PROMULGATED'
+                                ? 'bg-purple-500'
+                                : 'bg-gray-400'
+                            }`}
+                          />
+                          <span>
+                            {matter.status === 'ACTIVE'
+                              ? 'Active'
+                              : matter.status === 'FOR_PLEADING'
+                              ? 'For Pleading'
+                              : matter.status === 'UNDER_SUBMISSION'
+                              ? 'Under Submission'
+                              : matter.status === 'PROMULGATED'
+                              ? 'Promulgated'
+                              : matter.status === 'ARCHIVED'
+                              ? 'Archived'
+                              : String(matter.status)}
+                          </span>
+                        </div>
                       </TableCell>
                       <TableCell className="text-xs text-gray-500">
                         {format(matter.updatedAt, 'MMM d, yyyy')}

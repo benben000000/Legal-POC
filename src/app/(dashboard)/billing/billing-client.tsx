@@ -135,14 +135,24 @@ export function BillingClient({ entries, matters, userRole }: BillingClientProps
                     {formatPHP(entry.amount)}
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      variant={
-                        entry.paymentStatus === 'PAID' ? 'success' :
-                        entry.paymentStatus === 'BILLED' ? 'info' : 'warning'
-                      }
-                    >
-                      {entry.paymentStatus}
-                    </Badge>
+                    <div className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-700 whitespace-nowrap">
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                          entry.paymentStatus === 'PAID'
+                            ? 'bg-emerald-500'
+                            : entry.paymentStatus === 'BILLED'
+                            ? 'bg-blue-500'
+                            : 'bg-amber-500'
+                        }`}
+                      />
+                      <span>
+                        {entry.paymentStatus === 'PAID'
+                          ? 'Paid'
+                          : entry.paymentStatus === 'BILLED'
+                          ? 'Billed'
+                          : 'Unbilled / Pending'}
+                      </span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <Link

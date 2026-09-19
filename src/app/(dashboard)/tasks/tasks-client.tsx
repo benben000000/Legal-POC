@@ -256,17 +256,19 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
                               <span className="text-gray-300 group-hover:text-gray-500 text-xs select-none">
                                 ⠿
                               </span>
-                              <Badge
-                                variant={
+                              <span
+                                className={`inline-flex items-center gap-1.5 text-[11px] font-medium ${
                                   task.priority === 'CRITICAL'
-                                    ? 'error'
+                                    ? 'text-rose-700'
                                     : task.priority === 'HIGH'
-                                    ? 'warning'
-                                    : 'neutral'
-                                }
+                                    ? 'text-amber-700'
+                                    : 'text-gray-500'
+                                }`}
                               >
-                                {task.priority}
-                              </Badge>
+                                {task.priority === 'CRITICAL' && <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />}
+                                {task.priority === 'HIGH' && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
+                                {task.priority === 'CRITICAL' ? 'Critical' : task.priority === 'HIGH' ? 'High' : task.priority === 'NORMAL' ? 'Normal' : 'Low'}
+                              </span>
                             </div>
 
                             {task.dueDate && (
@@ -380,17 +382,19 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
                         {task.dueDate ? format(new Date(task.dueDate), 'MMM d, yyyy') : '-'}
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant={
+                        <span
+                          className={`inline-flex items-center gap-1.5 text-xs font-medium ${
                             task.priority === 'CRITICAL'
-                              ? 'error'
+                              ? 'text-rose-700'
                               : task.priority === 'HIGH'
-                              ? 'warning'
-                              : 'neutral'
-                          }
+                              ? 'text-amber-700'
+                              : 'text-gray-600'
+                          }`}
                         >
-                          {task.priority}
-                        </Badge>
+                          {task.priority === 'CRITICAL' && <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />}
+                          {task.priority === 'HIGH' && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
+                          {task.priority === 'CRITICAL' ? 'Critical' : task.priority === 'HIGH' ? 'High' : task.priority === 'NORMAL' ? 'Normal' : 'Low'}
+                        </span>
                       </TableCell>
                       <TableCell className="text-xs text-gray-700">
                         {currentStage?.label || task.status}

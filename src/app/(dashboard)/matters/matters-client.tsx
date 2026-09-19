@@ -46,6 +46,28 @@ const PRIORITY_OPTIONS = [
   { id: 'LOW', label: 'Low' },
 ];
 
+function formatStatus(status: string) {
+  switch (status) {
+    case 'ACTIVE': return 'Active';
+    case 'FOR_PLEADING': return 'For Pleading';
+    case 'UNDER_SUBMISSION': return 'Under Submission';
+    case 'PROMULGATED': return 'Promulgated';
+    case 'ARCHIVED': return 'Archived';
+    default: return status.replace(/_/g, ' ');
+  }
+}
+
+function formatPriority(priority: string) {
+  switch (priority) {
+    case 'URGENT': return 'Urgent';
+    case 'CRITICAL': return 'Critical';
+    case 'HIGH': return 'High';
+    case 'NORMAL': return 'Normal';
+    case 'LOW': return 'Low';
+    default: return priority;
+  }
+}
+
 export function MattersClient({ matters, userRole }: MattersClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -270,27 +292,41 @@ export function MattersClient({ matters, userRole }: MattersClientProps) {
                     {matter.clientName}
                   </TableCell>
                   <TableCell>
-                    <Badge 
-                      variant={
-                        matter.status === 'ACTIVE' || matter.status === 'FOR_PLEADING' ? 'success' : 
-                        matter.status === 'ARCHIVED' ? 'neutral' : 'warning'
-                      }
-                    >
-                      {matter.status.replace('_', ' ')}
-                    </Badge>
+                    <div className="inline-flex items-center gap-2 text-xs font-medium text-gray-700 whitespace-nowrap">
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                          matter.status === 'ACTIVE'
+                            ? 'bg-emerald-500'
+                            : matter.status === 'FOR_PLEADING'
+                            ? 'bg-blue-500'
+                            : matter.status === 'UNDER_SUBMISSION'
+                            ? 'bg-amber-500'
+                            : matter.status === 'PROMULGATED'
+                            ? 'bg-purple-500'
+                            : 'bg-gray-400'
+                        }`}
+                      />
+                      <span>{formatStatus(matter.status)}</span>
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      variant={
+                    <span
+                      className={`inline-flex items-center gap-1.5 text-xs font-medium ${
                         matter.priority === 'URGENT' || matter.priority === 'CRITICAL'
-                          ? 'error'
+                          ? 'text-rose-700'
                           : matter.priority === 'HIGH'
-                          ? 'warning'
-                          : 'neutral'
-                      }
+                          ? 'text-amber-700'
+                          : 'text-gray-600'
+                      }`}
                     >
-                      {matter.priority}
-                    </Badge>
+                      {(matter.priority === 'URGENT' || matter.priority === 'CRITICAL') && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                      )}
+                      {matter.priority === 'HIGH' && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                      )}
+                      {formatPriority(matter.priority)}
+                    </span>
                   </TableCell>
                   <TableCell className="text-right">
                     <Link

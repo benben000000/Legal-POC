@@ -266,9 +266,17 @@ export function DocumentsClient({ documents, matters }: DocumentsClientProps) {
                     </Link>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="neutral">
-                      {doc.category.replace('_', ' ')}
-                    </Badge>
+                    <span className="text-xs text-gray-600 font-medium">
+                      {doc.category === 'PLEADINGS_MOTIONS'
+                        ? 'Pleadings & Motions'
+                        : doc.category === 'COURT_ORDERS'
+                        ? 'Court Orders'
+                        : doc.category === 'EVIDENCE_ANNEXES'
+                        ? 'Evidence & Annexes'
+                        : doc.category === 'CORRESPONDENCE_BILLING'
+                        ? 'Correspondence'
+                        : doc.category.replace(/_/g, ' ')}
+                    </span>
                   </TableCell>
                   <TableCell className="text-gray-500 text-xs font-mono">
                     {format(new Date(doc.createdAt), 'MMM d, yyyy')}

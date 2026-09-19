@@ -89,14 +89,15 @@ export function TeamClient({ users, currentUserId }: TeamClientProps) {
                   </TableCell>
                   <TableCell className="text-gray-600">{u.email}</TableCell>
                   <TableCell>
-                    <Badge variant={u.role === 'LEAD_ATTORNEY' ? 'info' : u.role === 'ASSOCIATE' ? 'neutral' : 'warning'}>
-                      {u.role.replace('_', ' ')}
-                    </Badge>
+                    <span className="text-xs font-medium text-gray-700">
+                      {u.role === 'LEAD_ATTORNEY' ? 'Lead Attorney' : u.role === 'ASSOCIATE' ? 'Associate' : 'Staff'}
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={u.isActive ? 'success' : 'error'}>
-                      {u.isActive ? 'Active' : 'Inactive'}
-                    </Badge>
+                    <div className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-700 whitespace-nowrap">
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${u.isActive ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                      <span>{u.isActive ? 'Active' : 'Inactive'}</span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-gray-600">
                     {format(new Date(u.createdAt), 'MMM d, yyyy')}

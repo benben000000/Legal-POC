@@ -25,6 +25,27 @@ interface MatterDetailProps {
   userRole: string;
 }
 
+function formatStatus(status: string) {
+  switch (status) {
+    case 'ACTIVE': return 'Active';
+    case 'FOR_PLEADING': return 'For Pleading';
+    case 'UNDER_SUBMISSION': return 'Under Submission';
+    case 'PROMULGATED': return 'Promulgated';
+    case 'ARCHIVED': return 'Archived';
+    default: return status ? status.replace(/_/g, ' ') : '';
+  }
+}
+
+function formatTaskStatus(status: string) {
+  switch (status) {
+    case 'TODO': return 'To Do';
+    case 'IN_PROGRESS': return 'In Progress';
+    case 'FOR_ATTORNEY_REVIEW': return 'Attorney Review';
+    case 'COMPLETED_FILED': return 'Completed';
+    default: return status ? status.replace(/_/g, ' ') : '';
+  }
+}
+
 export function MatterDetailClient({
   matter,
   availableUsers,
@@ -107,14 +128,22 @@ export function MatterDetailClient({
                 <div>
                   <dt className="text-xs font-medium text-gray-500 uppercase">Status</dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    <Badge
-                      variant={
-                        matter.status === 'ACTIVE' || matter.status === 'FOR_PLEADING' ? 'success' :
-                        matter.status === 'ARCHIVED' ? 'neutral' : 'warning'
-                      }
-                    >
-                      {matter.status.replace('_', ' ')}
-                    </Badge>
+                    <span className="inline-flex items-center gap-1.5 font-medium text-gray-800">
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                          matter.status === 'ACTIVE'
+                            ? 'bg-emerald-500'
+                            : matter.status === 'FOR_PLEADING'
+                            ? 'bg-blue-500'
+                            : matter.status === 'UNDER_SUBMISSION'
+                            ? 'bg-amber-500'
+                            : matter.status === 'PROMULGATED'
+                            ? 'bg-purple-500'
+                            : 'bg-gray-400'
+                        }`}
+                      />
+                      {formatStatus(matter.status)}
+                    </span>
                   </dd>
                 </div>
                 <div>
@@ -139,14 +168,30 @@ export function MatterDetailClient({
                     {format(new Date(matter.openedAt), 'MMM d, yyyy')}
                   </dd>
                 </div>
+                <div>
+                  <dt className="text-xs font-medium text-gray-500 uppercase">Presiding Judge</dt>
+                  <dd className="mt-1 text-sm text-gray-900">{matter.presidingJudge || 'Not Specified'}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium text-gray-500 uppercase">Docket / Civil Case No.</dt>
+                  <dd className="mt-1 text-sm text-gray-900 font-mono">{matter.docketNumber || 'Unassigned'}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium text-gray-500 uppercase">Assigned Team</dt>
+                  <dd className="mt-1 text-sm text-gray-900 font-medium">
+                    {matter.members && matter.members.length > 0 
+                      ? matter.members.map((m: any) => `${m.user.firstName} ${m.user.lastName}`).join(', ')
+                      : 'Lead Attorney Sole Counsel'}
+                  </dd>
+                </div>
               </dl>
             </CardBody>
           </Card>
 
-          {/* Active Deadlines */}
+          {/* Procedural Deadlines */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Court Deadlines ({matter.deadlines?.length || 0})</CardTitle>
+              <CardTitle>Deadlines &amp; Appearances ({matter.deadlines?.length || 0})</CardTitle>
               <Link href="/deadlines" className="text-xs font-medium text-blue-600 hover:underline">
                 View all deadlines
               </Link>
@@ -156,9 +201,9 @@ export function MatterDetailClient({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Deadline Title</TableHead>
+                      <TableHead>Title</TableHead>
                       <TableHead>Due Date</TableHead>
-                      <TableHead>Urgency</TableHead>
+                      <TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -169,16 +214,32 @@ export function MatterDetailClient({
                           {format(new Date(d.dueDate), 'MMM d, yyyy')}
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant={
-                              d.isCompleted ? 'success' :
-                              new Date(d.dueDate) < new Date() ? 'error' :
-                              d.urgencyLevel === 'CRITICAL' ? 'error' :
-                              d.urgencyLevel === 'UPCOMING' ? 'warning' : 'neutral'
-                            }
-                          >
-                            {d.isCompleted ? 'Completed' : (new Date(d.dueDate) < new Date() ? 'Overdue' : d.urgencyLevel)}
-                          </Badge>
+                          <div className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-700 whitespace-nowrap">
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                                d.isCompleted
+                                  ? 'bg-emerald-500'
+                                  : new Date(d.dueDate) < new Date()
+                                  ? 'bg-rose-500'
+                                  : d.urgencyLevel === 'CRITICAL'
+                                  ? 'bg-rose-500'
+                                  : d.urgencyLevel === 'UPCOMING'
+                                  ? 'bg-amber-500'
+                                  : 'bg-gray-400'
+                              }`}
+                            />
+                            <span>
+                              {d.isCompleted
+                                ? 'Completed'
+                                : new Date(d.dueDate) < new Date()
+                                ? 'Overdue'
+                                : d.urgencyLevel === 'UPCOMING'
+                                ? 'Upcoming'
+                                : d.urgencyLevel === 'CRITICAL'
+                                ? 'Critical'
+                                : 'Scheduled'}
+                            </span>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -218,14 +279,20 @@ export function MatterDetailClient({
                         </TableCell>
                         <TableCell className="text-gray-600 text-xs">{t.priority}</TableCell>
                         <TableCell>
-                          <Badge
-                            variant={
-                              t.status === 'COMPLETED_FILED' ? 'success' :
-                              t.status === 'IN_PROGRESS' || t.status === 'FOR_ATTORNEY_REVIEW' ? 'info' : 'neutral'
-                            }
-                          >
-                            {t.status.replace(/_/g, ' ')}
-                          </Badge>
+                          <div className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-700 whitespace-nowrap">
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                                t.status === 'COMPLETED_FILED'
+                                  ? 'bg-emerald-500'
+                                  : t.status === 'FOR_ATTORNEY_REVIEW'
+                                  ? 'bg-amber-500'
+                                  : t.status === 'IN_PROGRESS'
+                                  ? 'bg-blue-500'
+                                  : 'bg-gray-400'
+                              }`}
+                            />
+                            <span>{formatTaskStatus(t.status)}</span>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -314,7 +381,9 @@ export function MatterDetailClient({
                         <span className="font-medium text-gray-800">
                           {m.user.firstName} {m.user.lastName}
                         </span>
-                        <Badge variant="neutral">{m.role}</Badge>
+                        <span className="text-[11px] text-gray-500 font-medium">
+                          {m.role === 'LEAD_ATTORNEY' ? 'Lead Attorney' : m.role === 'ASSOCIATE' ? 'Associate' : m.role.replace(/_/g, ' ')}
+                        </span>
                       </div>
                     ))
                   ) : (
