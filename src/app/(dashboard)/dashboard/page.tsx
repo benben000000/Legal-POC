@@ -47,46 +47,63 @@ export default async function DashboardPage() {
         title="Dashboard"
         description={`Welcome back, ${user.firstName} ${user.lastName}. Here is an overview of active matters and court deadlines.`}
         action={
-          <div className="flex space-x-2">
+          <div className="flex items-center space-x-2">
+            <Link href="/tasks">
+              <Button variant="secondary" size="sm">
+                Kanban Tasks
+              </Button>
+            </Link>
             <Link href="/matters/new">
               <Button variant="primary" size="sm">
-                New Matter
+                + New Matter
               </Button>
             </Link>
           </div>
         }
       />
 
-      {/* KPI Metric Cards — compliant with GEMINI.md: rounded-[4px], border-gray-200, shadow-none */}
+      {/* Modern KPI Metric Cards with rounded-xl and subtle shadow-xs */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white border border-gray-200 rounded-[4px] p-4 shadow-none">
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Active Matters</span>
-          <div className="mt-2 flex items-baseline">
-            <span className="text-2xl font-bold text-gray-900">{activeMattersCount}</span>
-            <span className="ml-2 text-xs text-gray-500">cases</span>
+        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Matters</span>
+            <Badge variant="info">Cases</Badge>
+          </div>
+          <div className="mt-3 flex items-baseline">
+            <span className="text-3xl font-bold text-gray-900">{activeMattersCount}</span>
+            <span className="ml-2 text-xs text-gray-500">in jurisdiction</span>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-[4px] p-4 shadow-none">
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Active Tasks</span>
-          <div className="mt-2 flex items-baseline">
-            <span className="text-2xl font-bold text-gray-900">{totalTasksCount}</span>
+        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Tasks</span>
+            <Badge variant="warning">Workflow</Badge>
+          </div>
+          <div className="mt-3 flex items-baseline">
+            <span className="text-3xl font-bold text-gray-900">{totalTasksCount}</span>
             <span className="ml-2 text-xs text-gray-500">in progress</span>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-[4px] p-4 shadow-none">
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Pending Deadlines</span>
-          <div className="mt-2 flex items-baseline">
-            <span className="text-2xl font-bold text-gray-900">{pendingDeadlinesCount}</span>
+        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Pending Deadlines</span>
+            <Badge variant="error">Rules of Court</Badge>
+          </div>
+          <div className="mt-3 flex items-baseline">
+            <span className="text-3xl font-bold text-gray-900">{pendingDeadlinesCount}</span>
             <span className="ml-2 text-xs text-gray-500">cutoffs</span>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-[4px] p-4 shadow-none">
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">E-Filing Status</span>
-          <div className="mt-2 flex items-baseline">
-            <span className="text-sm font-medium text-green-700">Online</span>
+        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">E-Filing Status</span>
+            <Badge variant="success">Online</Badge>
+          </div>
+          <div className="mt-3 flex items-baseline">
+            <span className="text-sm font-semibold text-green-700">Connected</span>
             <span className="ml-2 text-xs text-gray-500">Supreme Court</span>
           </div>
         </div>
@@ -97,8 +114,8 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Matters</CardTitle>
-            <Link href="/matters" className="text-sm font-medium text-blue-600 hover:text-blue-500">
-              View all
+            <Link href="/matters" className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline">
+              View all matters &rarr;
             </Link>
           </CardHeader>
           <CardBody className="p-0">
@@ -114,10 +131,15 @@ export default async function DashboardPage() {
                 <TableBody>
                   {recentMatters.map((matter) => (
                     <TableRow key={matter.id}>
-                      <TableCell className="font-medium text-gray-900">
-                        <Link href={`/matters/${matter.id}`} className="hover:underline">
+                      <TableCell className="font-semibold text-gray-900">
+                        <Link href={`/matters/${matter.id}`} className="hover:text-blue-600 hover:underline">
                           {matter.caseTitle}
                         </Link>
+                        {matter.docketNumber && (
+                          <span className="block text-[11px] text-gray-400 font-mono">
+                            {matter.docketNumber}
+                          </span>
+                        )}
                       </TableCell>
                       <TableCell>
                         <Badge 
@@ -126,10 +148,10 @@ export default async function DashboardPage() {
                             matter.status === 'ARCHIVED' ? 'neutral' : 'warning'
                           }
                         >
-                          {matter.status}
+                          {matter.status.replace('_', ' ')}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-gray-500">
+                      <TableCell className="text-xs text-gray-500">
                         {format(matter.updatedAt, 'MMM d, yyyy')}
                       </TableCell>
                     </TableRow>
@@ -158,8 +180,8 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Upcoming Deadlines</CardTitle>
-            <Link href="/deadlines" className="text-sm font-medium text-blue-600 hover:text-blue-500">
-              View all
+            <Link href="/deadlines" className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline">
+              View calendar &rarr;
             </Link>
           </CardHeader>
           <CardBody className="p-0">
@@ -178,10 +200,10 @@ export default async function DashboardPage() {
                       <TableCell className="font-medium text-gray-900">
                         {deadline.title}
                       </TableCell>
-                      <TableCell className="text-gray-500 truncate max-w-[150px]">
+                      <TableCell className="text-xs text-gray-500 truncate max-w-[160px]">
                         {deadline.matter.caseTitle}
                       </TableCell>
-                      <TableCell className="text-gray-500">
+                      <TableCell className="text-xs font-medium text-gray-700">
                         {format(deadline.dueDate, 'MMM d, yyyy')}
                       </TableCell>
                     </TableRow>

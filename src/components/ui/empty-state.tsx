@@ -11,13 +11,13 @@ const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
     return (
       <div 
         ref={ref}
-        className={`text-center py-12 px-4 border border-dashed border-gray-300 rounded-[4px] bg-white ${className}`}
+        className={`text-center py-12 px-6 border border-dashed border-gray-300 rounded-xl bg-gray-50/50 ${className}`}
         {...props}
       >
-        <h3 className="text-sm font-medium text-gray-900">{title}</h3>
-        <p className="mt-1 text-sm text-gray-500">{description}</p>
+        <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
+        <p className="mt-1 text-xs text-gray-500 max-w-sm mx-auto">{description}</p>
         {action && (
-          <div className="mt-6">
+          <div className="mt-5">
             {action}
           </div>
         )}

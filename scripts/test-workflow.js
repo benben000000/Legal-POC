@@ -104,6 +104,30 @@ async function run() {
   const hasTeamMember = teamRes.body.includes('Santos');
   console.log('   Contains "Santos":', hasTeamMember);
 
+  // 8. Fetch Documents Vault (/documents)
+  console.log('8. Fetching Digital Document Vault (/documents)...');
+  const docRes = await testEndpoint('/documents', {
+    headers: { Cookie: cookie },
+  });
+  console.log('   Status:', docRes.statusCode);
+  const hasDocVault = docRes.body.includes('Digital Case Binder');
+  const hasPleadingsTab = docRes.body.includes('Pleadings') && docRes.body.includes('Motions');
+  console.log('   Contains "Digital Case Binder":', hasDocVault);
+  console.log('   Contains "Pleadings & Motions":', hasPleadingsTab);
+
+  // 9. Test Global Search API (/api/search)
+  console.log('9. Testing Global Quick Search API (/api/search?q=ayala)...');
+  const searchRes = await testEndpoint('/api/search?q=ayala', {
+    headers: { Cookie: cookie },
+  });
+  console.log('   Status:', searchRes.statusCode);
+  const searchJson = JSON.parse(searchRes.body);
+  console.log('   Matters found:', searchJson.matters?.length);
+  console.log('   Documents found:', searchJson.documents?.length);
+  if (!searchJson.matters || searchJson.matters.length === 0) {
+    throw new Error('Search did not return expected matter for query "ayala"!');
+  }
+
   console.log('--- All Legal Demo verification checks PASSED successfully! ---');
 }
 
