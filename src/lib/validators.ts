@@ -11,10 +11,16 @@ export const inviteSchema = z.object({
 });
 
 export const acceptInviteSchema = z.object({
-  token: z.string().min(1),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  password: z.string().min(12),
+  token: z.string().min(1, 'Invitation token is required'),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  password: z
+    .string()
+    .min(12, 'Password must be at least 12 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character (!@#$%^&* etc.)'),
 });
 
 export const matterSchema = z.object({

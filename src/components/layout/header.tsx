@@ -11,7 +11,17 @@ interface SearchResult {
   tasks: Array<{ id: string; title: string; status: string; matterId: string }>;
 }
 
-export function Header() {
+interface HeaderProps {
+  user?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    email: string;
+  };
+}
+
+export function Header({ user }: HeaderProps) {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult | null>(null);
@@ -224,12 +234,24 @@ export function Header() {
         {/* User Profile & Logout */}
         <div className="flex items-center space-x-4">
           <div className="hidden sm:flex items-center space-x-2 pl-2">
-            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-semibold text-xs flex items-center justify-center border border-blue-200">
-              AG
+            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-semibold text-xs flex items-center justify-center border border-blue-200 uppercase">
+              {user ? `${user.firstName[0] || ''}${user.lastName[0] || ''}` : 'BG'}
             </div>
             <div className="flex flex-col text-left">
-              <span className="text-xs font-semibold text-gray-900 leading-tight">Atty. Benedict Garcia</span>
-              <span className="text-[10px] text-gray-500">Managing Partner</span>
+              <span className="text-xs font-semibold text-gray-900 leading-tight">
+                {user
+                  ? user.role === 'LEAD_ATTORNEY' || user.role === 'ASSOCIATE'
+                    ? `Atty. ${user.firstName} ${user.lastName}`
+                    : `${user.firstName} ${user.lastName}`
+                  : 'Atty. Benedict Garcia'}
+              </span>
+              <span className="text-[10px] text-gray-500">
+                {user?.role === 'LEAD_ATTORNEY'
+                  ? 'Managing Partner'
+                  : user?.role === 'ASSOCIATE'
+                  ? 'Associate Attorney'
+                  : 'Legal Staff / Docketing'}
+              </span>
             </div>
           </div>
 

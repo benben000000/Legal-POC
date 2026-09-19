@@ -19,8 +19,9 @@ interface TaskItem {
   priority: string;
   dueDate: string | null;
   matterId: string;
+  assigneeId?: string | null;
   matter: { caseTitle: string };
-  assignee: { firstName: string; lastName: string } | null;
+  assignee: { firstName: string; lastName: string; role?: string } | null;
 }
 
 interface MatterOption {
@@ -38,6 +39,8 @@ interface TasksClientProps {
   tasks: TaskItem[];
   matters: MatterOption[];
   users: UserOption[];
+  currentUserId?: string;
+  currentUserRole?: string;
 }
 
 const STAGES = [
@@ -75,10 +78,17 @@ const STAGES = [
   },
 ] as const;
 
-export function TasksClient({ tasks: initialTasks, matters, users }: TasksClientProps) {
+export function TasksClient({
+  tasks: initialTasks,
+  matters,
+  users,
+  currentUserId,
+  currentUserRole,
+}: TasksClientProps) {
   const router = useRouter();
   const [tasks, setTasks] = useState<TaskItem[]>(initialTasks);
   const [viewMode, setViewMode] = useState<'board' | 'table'>('board');
+  const [scope, setScope] = useState<'all' | 'mine'>('all');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
@@ -90,6 +100,15 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
   useEffect(() => {
     setTasks(initialTasks);
   }, [initialTasks]);
+
+  const myTasksCount = currentUserId
+    ? tasks.filter((t) => t.assigneeId === currentUserId).length
+    : 0;
+
+  const displayedTasks =
+    scope === 'mine' && currentUserId
+      ? tasks.filter((t) => t.assigneeId === currentUserId)
+      : tasks;
 
   const handleUpdateStatus = async (taskId: string, newStatus: TaskItem['status']) => {
     const currentTask = tasks.find((t) => t.id === taskId);
@@ -168,7 +187,33 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
         title="Tasks"
         description="Collaborative 4-stage legal workflow for case delegation, drafting handoffs, and attorney review."
         action={
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Cogwheel Scope Switcher: All Firm Tasks vs My Tasks */}
+            <div className="inline-flex rounded-lg border border-gray-200 bg-gray-100 p-0.5 shadow-xs">
+              <button
+                type="button"
+                onClick={() => setScope('all')}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-150 ${
+                  scope === 'all'
+                    ? 'bg-white text-gray-900 shadow-xs'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                All Firm Tasks ({tasks.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setScope('mine')}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-150 ${
+                  scope === 'mine'
+                    ? 'bg-white text-gray-900 shadow-xs'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                My Tasks ({myTasksCount})
+              </button>
+            </div>
+
             {/* View Switcher Pill */}
             <div className="inline-flex rounded-lg border border-gray-200 bg-gray-100 p-0.5 shadow-xs">
               <button
@@ -206,7 +251,7 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
         /* 4-Stage Modern Drag-and-Drop Kanban Board */
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 select-none">
           {STAGES.map((stage) => {
-            const stageTasks = tasks.filter((t) => t.status === stage.id);
+            const stageTasks = displayedTasks.filter((t) => t.status === stage.id);
             const isColumnActive = dragOverStage === stage.id;
 
             return (
@@ -301,14 +346,21 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
                           {/* Footer with Assignee & Quick-Move Button */}
                           <div className="pt-2.5 border-t border-gray-100 flex items-center justify-between text-xs">
                             <div className="flex items-center space-x-1.5 text-gray-600">
-                              <span className="w-5 h-5 rounded-full bg-gray-100 text-gray-700 font-semibold text-[10px] flex items-center justify-center border border-gray-200">
+                              <span className="w-5 h-5 rounded-full bg-blue-50 text-blue-700 font-semibold text-[10px] flex items-center justify-center border border-blue-200 uppercase">
                                 {task.assignee ? task.assignee.firstName[0] : '?'}
                               </span>
-                              <span className="truncate max-w-[110px] text-[11px] font-medium">
-                                {task.assignee
-                                  ? `${task.assignee.firstName} ${task.assignee.lastName}`
-                                  : 'Unassigned'}
-                              </span>
+                              <div className="flex items-center space-x-1">
+                                <span className="truncate max-w-[100px] text-[11px] font-medium">
+                                  {task.assignee
+                                    ? `${task.assignee.firstName} ${task.assignee.lastName}`
+                                    : 'Unassigned'}
+                                </span>
+                                {task.assigneeId === currentUserId && (
+                                  <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1 py-0.2 rounded border border-blue-200">
+                                    You
+                                  </span>
+                                )}
+                              </div>
                             </div>
 
                             <button
@@ -358,10 +410,10 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tasks.map((task) => {
+                {displayedTasks.map((task) => {
                   const currentStage = STAGES.find((s) => s.id === task.status);
                   return (
-                    <TableRow key={task.id}>
+                    <TableRow key={task.id} className="hover:bg-gray-50/80 transition-colors">
                       <TableCell className="font-semibold text-gray-900">
                         {task.title}
                       </TableCell>

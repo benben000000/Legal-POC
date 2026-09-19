@@ -25,25 +25,31 @@ export default async function BillingPage() {
     ],
   };
 
-  const entries = await prisma.billingEntry.findMany({
-    where,
-    include: {
-      matter: { select: { caseTitle: true } },
-      user: { select: { firstName: true, lastName: true } },
-    },
-    orderBy: { datePerformed: 'desc' },
-  });
+  const mattersWhere =
+    user.role === 'LEAD_ATTORNEY'
+      ? {}
+      : {
+          OR: [
+            { createdById: user.id },
+            { members: { some: { userId: user.id } } },
+          ],
+        };
 
-  const matters = await prisma.matter.findMany({
-    where: user.role === 'LEAD_ATTORNEY' ? {} : {
-      OR: [
-        { createdById: user.id },
-        { members: { some: { userId: user.id } } },
-      ],
-    },
-    select: { id: true, caseTitle: true },
-    orderBy: { caseTitle: 'asc' },
-  });
+  const [entries, matters] = await Promise.all([
+    prisma.billingEntry.findMany({
+      where,
+      include: {
+        matter: { select: { caseTitle: true } },
+        user: { select: { firstName: true, lastName: true } },
+      },
+      orderBy: { datePerformed: 'desc' },
+    }),
+    prisma.matter.findMany({
+      where: mattersWhere,
+      select: { id: true, caseTitle: true },
+      orderBy: { caseTitle: 'asc' },
+    }),
+  ]);
 
   const serializedEntries = entries.map((entry) => ({
     id: entry.id,

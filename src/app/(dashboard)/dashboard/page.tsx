@@ -12,12 +12,7 @@ import { EmptyState } from '@/components/ui/empty-state';
 export default async function DashboardPage() {
   const user = await requireAuth();
 
-  const mattersWhere = user.role === 'LEAD_ATTORNEY' ? {} : {
-    OR: [
-      { createdById: user.id },
-      { members: { some: { userId: user.id } } },
-    ],
-  };
+  const mattersWhere = { status: { not: 'ARCHIVED' as const } };
 
   // Metrics query
   const [activeMattersCount, totalTasksCount, pendingDeadlinesCount, recentMatters, upcomingDeadlines] = await Promise.all([

@@ -3,8 +3,10 @@ import { z } from 'zod';
 
 export function handleApiError(error: any) {
   if (error instanceof z.ZodError || error.name === 'ZodError') {
+    const issues = (error as any).issues || (error as any).errors || [];
+    const firstErrorMessage = issues[0]?.message || 'Validation failed';
     return NextResponse.json(
-      { error: 'Validation failed', details: (error as any).errors },
+      { error: firstErrorMessage, details: issues },
       { status: 400 }
     );
   }

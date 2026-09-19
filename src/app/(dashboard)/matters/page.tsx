@@ -5,12 +5,7 @@ import { MattersClient } from './matters-client';
 export default async function MattersPage() {
   const user = await requireAuth();
 
-  const where = user.role === 'LEAD_ATTORNEY' ? {} : {
-    OR: [
-      { createdById: user.id },
-      { members: { some: { userId: user.id } } },
-    ],
-  };
+  const where = { status: { not: 'ARCHIVED' as const } };
 
   const matters = await prisma.matter.findMany({
     where,

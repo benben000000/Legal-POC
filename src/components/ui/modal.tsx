@@ -1,4 +1,7 @@
-import { HTMLAttributes, forwardRef, useEffect } from 'react';
+'use client';
+
+import { HTMLAttributes, forwardRef, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   isOpen: boolean;
@@ -7,6 +10,12 @@ interface ModalProps extends HTMLAttributes<HTMLDivElement> {
 
 const Modal = forwardRef<HTMLDivElement, ModalProps>(
   ({ isOpen, onClose, className = '', children, ...props }, ref) => {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
     useEffect(() => {
       const handleEscape = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
@@ -25,18 +34,18 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
       };
     }, [isOpen, onClose]);
 
-    if (!isOpen) return null;
+    if (!isOpen || !mounted) return null;
 
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+    const modalContent = (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
         <div 
-          className="fixed inset-0 bg-gray-950/40 backdrop-blur-xs transition-opacity duration-150" 
+          className="fixed inset-0 bg-gray-950/50 backdrop-blur-[2px] transition-opacity duration-150" 
           onClick={onClose}
           aria-hidden="true"
         />
         <div 
           ref={ref}
-          className={`relative max-w-2xl mx-auto my-6 z-50 bg-white border border-gray-200 rounded-2xl shadow-xl flex flex-col w-full outline-none focus:outline-none animate-soft-in ${className}`}
+          className={`relative max-w-2xl mx-auto my-6 z-[101] bg-white border border-gray-200 rounded-2xl shadow-2xl flex flex-col w-full outline-none focus:outline-none animate-soft-in ${className}`}
           role="dialog"
           aria-modal="true"
           {...props}
@@ -45,6 +54,8 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
         </div>
       </div>
     );
+
+    return createPortal(modalContent, document.body);
   }
 );
 Modal.displayName = 'Modal';

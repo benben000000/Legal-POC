@@ -58,7 +58,12 @@ export async function POST(request: NextRequest) {
 
     // In a real application, we would send an email here.
     // For v0.1, we'll return the invite link directly.
-    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/invite/${token}`;
+    const origin =
+      process.env.NEXT_PUBLIC_APP_URL ||
+      (request.headers.get('host')
+        ? `${request.headers.get('x-forwarded-proto') || 'https'}://${request.headers.get('host')}`
+        : 'http://localhost:3000');
+    const inviteLink = `${origin}/invite/${token}`;
 
     return NextResponse.json({
       success: true,

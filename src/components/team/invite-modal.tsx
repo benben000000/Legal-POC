@@ -104,7 +104,7 @@ export function InviteModal({ isOpen, onClose, onSuccess }: InviteModalProps) {
             )}
 
             <Input
-              label="Email Address *"
+              label="Email Address"
               id="invite-email"
               type="email"
               required
@@ -114,8 +114,9 @@ export function InviteModal({ isOpen, onClose, onSuccess }: InviteModalProps) {
             />
 
             <Select
-              label="Role Designation *"
+              label="Role Designation"
               id="invite-role"
+              required
               value={role}
               onChange={(e) => setRole(e.target.value as 'ASSOCIATE' | 'STAFF')}
               options={[

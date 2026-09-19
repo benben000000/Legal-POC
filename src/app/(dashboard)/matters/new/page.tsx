@@ -61,7 +61,8 @@ export default function NewMatterPage() {
       router.push(`/matters/${matter.id}`);
     } catch (err: any) {
       if (err.name === 'ZodError' || err instanceof z.ZodError) {
-        setError(err.errors ? err.errors[0]?.message : 'Validation Error');
+        const issues = err.issues || err.errors || [];
+        setError(issues[0]?.message || 'Validation Error');
       } else if (err instanceof Error) {
         setError(err.message);
       } else {

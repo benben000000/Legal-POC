@@ -33,9 +33,15 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { email, password } = loginSchema.parse(body);
+    const normalizedEmail = email.trim().toLowerCase();
 
-    const user = await prisma.user.findUnique({
-      where: { email },
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: normalizedEmail },
+          { email: { equals: normalizedEmail, mode: 'insensitive' } },
+        ],
+      },
     });
 
     if (!user || !user.isActive) {
