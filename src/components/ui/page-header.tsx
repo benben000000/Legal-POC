@@ -11,21 +11,21 @@ const PageHeader = forwardRef<HTMLDivElement, PageHeaderProps>(
     return (
       <div 
         ref={ref}
-        className={`md:flex md:items-center md:justify-between mb-6 ${className}`}
+        className={`flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2 ${className}`}
         {...props}
       >
         <div className="min-w-0 flex-1">
-          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             {title}
-          </h2>
+          </h1>
           {description && (
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-slate-500 max-w-3xl leading-relaxed">
               {description}
             </p>
           )}
         </div>
         {action && (
-          <div className="mt-4 flex md:ml-4 md:mt-0">
+          <div className="flex items-center gap-2 shrink-0">
             {action}
           </div>
         )}

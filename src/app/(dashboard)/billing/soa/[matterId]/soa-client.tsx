@@ -235,7 +235,7 @@ export function SOAClient({ matter }: SOAClientProps) {
           <p>Please make check payments payable to: <span className="font-medium text-gray-800">Benedict Garcia Law Offices</span>.</p>
           <p>For electronic bank transfers: <span className="font-medium text-gray-800">Bank of the Philippine Islands (BPI)</span> | Acct: 1234-5678-90.</p>
           <p className="italic text-[11px] text-gray-500 pt-2">
-            This is an official Statement of Account generated under LegalSuite Core practice management.
+            This is an official Statement of Account generated under Legal Demo practice management.
           </p>
         </div>
       </div>

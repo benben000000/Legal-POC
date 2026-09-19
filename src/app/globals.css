@@ -1,56 +1,64 @@
 @import "tailwindcss";
 
 /* ============================================
-   LegalSuite Core — Design System
-   Professional Minimalistic (No Decorations)
+   Legal Demo — Design System
+   Modern Soft Minimalistic & Fluid Interactions
    ============================================ */
 
 :root {
-  /* Grayscale */
+  /* Soft Slate & Zinc Grayscale */
   --color-white: #ffffff;
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #111827;
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0f172a;
+  --color-gray-950: #020617;
 
-  /* Accent */
+  /* Refined Modern Blue */
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
   --color-blue-600: #2563eb;
   --color-blue-700: #1d4ed8;
 
-  /* Semantic */
+  /* Semantic Roles */
   --color-success: #059669;
   --color-warning: #d97706;
   --color-error: #dc2626;
   --color-info: #2563eb;
 
-  /* Page */
-  --background: var(--color-gray-50);
-  --foreground: var(--color-gray-900);
+  /* Page Baseline */
+  --background: #f8fafc;
+  --foreground: #0f172a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Design system colors exposed to Tailwind */
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #111827;
+  /* Modernized Slate palette */
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0f172a;
+  --color-gray-950: #020617;
+
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
   --color-blue-600: #2563eb;
   --color-blue-700: #1d4ed8;
+
   --color-success: #059669;
   --color-warning: #d97706;
   --color-error: #dc2626;
@@ -61,18 +69,18 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Focus styles — 2px blue outline per design system */
+/* Focus styles — crisp accessible outline */
 *:focus-visible {
   outline: 2px solid var(--color-blue-600);
   outline-offset: 2px;
 }
 
-/* Reduced motion */
+/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -82,12 +90,12 @@ body {
   }
 }
 
-/* Spinner */
+/* Smooth Spinner */
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid var(--color-gray-200);
-  border-top-color: var(--color-blue-600);
+  border: 2px solid #e2e8f0;
+  border-top-color: #2563eb;
   border-radius: 50%;
   animation: spin 600ms linear infinite;
 }
@@ -103,7 +111,55 @@ body {
   }
 }
 
-/* Skip to content — accessibility */
+/* Fluid Keyframes */
+@keyframes softFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-soft-in {
+  animation: softFadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Kanban Drag & Drop Styles */
+.kanban-card-dragging {
+  opacity: 0.45;
+  transform: scale(0.98) rotate(1deg);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  transition: all 150ms ease;
+  cursor: grabbing !important;
+}
+
+.kanban-column-active {
+  background-color: #eff6ff !important;
+  border-color: #93c5fd !important;
+  box-shadow: inset 0 0 0 1px #60a5fa, 0 4px 12px rgba(37, 99, 235, 0.08);
+  transition: all 150ms ease;
+}
+
+/* Clean Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Skip to content accessibility */
 .skip-link {
   position: absolute;
   top: -40px;
@@ -113,6 +169,7 @@ body {
   padding: 8px 16px;
   z-index: 100;
   font-size: 0.875rem;
+  border-radius: 0 0 6px 6px;
 }
 
 .skip-link:focus {
