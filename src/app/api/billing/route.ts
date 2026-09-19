@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
 import { handleApiError } from '@/lib/utils';
 import { createAuditLog, getClientIp } from '@/lib/audit';
+import { billingEntrySchema } from '@/lib/validators';
 
 export async function GET(request: NextRequest) {
   try {
@@ -53,14 +54,17 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    
-    // Simplistic validation for v0.1 without relying on Zod just for speed here
-    if (!body.matterId || !body.date || !body.description || !body.amount) {
-       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
-    }
+    const validated = billingEntrySchema.parse({
+      ...body,
+      amount: typeof body.amount === 'string' ? parseFloat(body.amount) : body.amount,
+      hours: body.hours ? (typeof body.hours === 'string' ? parseFloat(body.hours) : body.hours) : undefined,
+      hourlyRate: body.hourlyRate ? (typeof body.hourlyRate === 'string' ? parseFloat(body.hourlyRate) : body.hourlyRate) : (body.rate ? (typeof body.rate === 'string' ? parseFloat(body.rate) : body.rate) : undefined),
+      datePerformed: body.datePerformed || body.date || new Date().toISOString(),
+      billingType: body.billingType || body.type || 'DRAFTING_FEE',
+    });
 
     const matter = await prisma.matter.findUnique({
-      where: { id: body.matterId },
+      where: { id: validated.matterId },
     });
 
     if (!matter) {
@@ -78,15 +82,16 @@ export async function POST(request: NextRequest) {
 
     const billingEntry = await prisma.billingEntry.create({
       data: {
-        matterId: body.matterId,
-        datePerformed: new Date(body.date),
-        description: body.description,
-        hours: body.hours || null,
-        hourlyRate: body.rate || null,
-        amount: body.amount,
-        billingType: body.type || 'FEE',
-        title: body.description,
+        matterId: validated.matterId,
+        datePerformed: new Date(validated.datePerformed),
+        description: validated.description,
+        hours: validated.hours ?? null,
+        hourlyRate: validated.hourlyRate ?? null,
+        amount: validated.amount,
+        billingType: validated.billingType,
+        title: validated.title || validated.description,
         userId: user.id,
+        isBillable: validated.isBillable,
       },
     });
 

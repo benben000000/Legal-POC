@@ -55,6 +55,50 @@ export async function PUT(
   }
 }
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const user = await requireAuth();
+    const { id } = await params;
+
+    const deadline = await prisma.deadline.findUnique({
+      where: { id },
+      include: { matter: true },
+    });
+
+    if (!deadline) {
+      return NextResponse.json({ error: 'Deadline not found' }, { status: 404 });
+    }
+
+    const body = await request.json();
+    const isCompleted = typeof body.isCompleted === 'boolean' ? body.isCompleted : !deadline.isCompleted;
+
+    const updatedDeadline = await prisma.deadline.update({
+      where: { id },
+      data: {
+        isCompleted,
+        completedAt: isCompleted ? new Date() : null,
+      },
+    });
+
+    await createAuditLog({
+      userId: user.id,
+      action: 'UPDATE',
+      entityType: 'DEADLINE',
+      entityId: updatedDeadline.id,
+      entityTitle: updatedDeadline.title,
+      metadata: { isCompleted },
+      ipAddress: getClientIp(request),
+    });
+
+    return NextResponse.json({ deadline: updatedDeadline });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

@@ -54,3 +54,25 @@ export const documentSchema = z.object({
   fileType: z.string().optional(),
   fileSize: z.number().optional(),
 });
+
+export const billingEntrySchema = z.object({
+  matterId: z.string().min(1, 'Matter is required'),
+  datePerformed: z.string().or(z.date()),
+  description: z.string().min(1, 'Description is required'),
+  title: z.string().optional(),
+  billingType: z.enum([
+    'APPEARANCE_FEE',
+    'DRAFTING_FEE',
+    'ACCEPTANCE_RETAINER',
+    'COURT_FILING_FEE',
+    'NOTARIAL_FEE',
+    'TRANSPORT_FEE',
+    'SHERIFF_FEE',
+    'OTHER_DISBURSEMENT',
+  ]),
+  hours: z.number().optional(),
+  hourlyRate: z.number().optional(),
+  amount: z.number().min(0, 'Amount must be non-negative'),
+  isBillable: z.boolean().default(true),
+});
+

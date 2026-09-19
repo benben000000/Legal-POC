@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth';
-import { deadlineSchema } from '@/lib/validators';
 import { handleApiError } from '@/lib/utils';
 import { createAuditLog, getClientIp } from '@/lib/audit';
+
+function calculateUrgency(dueDate: Date): 'CRITICAL' | 'UPCOMING' | 'ON_SCHEDULE' {
+  const diffMs = dueDate.getTime() - Date.now();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays <= 3) return 'CRITICAL';
+  if (diffDays <= 7) return 'UPCOMING';
+  return 'ON_SCHEDULE';
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,8 +22,7 @@ export async function GET(request: NextRequest) {
     if (matterId) {
       where.matterId = matterId;
     }
-    
-    // Auth check: if not lead, ensure they are part of the matter
+
     if (user.role !== 'LEAD_ATTORNEY') {
       where.matter = {
         OR: [
@@ -44,11 +50,14 @@ export async function POST(request: NextRequest) {
   try {
     const user = await requireAuth();
     const body = await request.json();
-    const validatedData = deadlineSchema.parse(body);
+
+    if (!body.title || !body.matterId) {
+      return NextResponse.json({ error: 'Title and Matter are required' }, { status: 400 });
+    }
 
     // Verify matter access
     const matter = await prisma.matter.findUnique({
-      where: { id: validatedData.matterId },
+      where: { id: body.matterId },
     });
 
     if (!matter) {
@@ -56,22 +65,37 @@ export async function POST(request: NextRequest) {
     }
 
     if (user.role !== 'LEAD_ATTORNEY' && matter.createdById !== user.id) {
-       // Also check if they are a member of the matter
-       const isMember = await prisma.matterMember.findUnique({
-         where: { matterId_userId: { matterId: matter.id, userId: user.id } }
-       });
-       if (!isMember) {
-         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-       }
+      const isMember = await prisma.matterMember.findUnique({
+        where: { matterId_userId: { matterId: matter.id, userId: user.id } },
+      });
+      if (!isMember) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
     }
+
+    const triggerDate = body.triggerDate ? new Date(body.triggerDate) : new Date();
+    const periodDays = Number(body.periodDays) || 0;
+
+    let dueDate: Date;
+    if (body.dueDate) {
+      dueDate = new Date(body.dueDate);
+    } else if (periodDays > 0) {
+      dueDate = new Date(triggerDate.getTime() + periodDays * 24 * 60 * 60 * 1000);
+    } else {
+      dueDate = triggerDate;
+    }
+
+    const urgencyLevel = calculateUrgency(dueDate);
 
     const deadline = await prisma.deadline.create({
       data: {
-        title: validatedData.title,
-        dueDate: new Date(validatedData.dueDate),
-        periodDays: 0,
-        triggerDate: new Date(),
-        matterId: validatedData.matterId,
+        title: body.title,
+        description: body.description || null,
+        triggerDate,
+        dueDate,
+        periodDays,
+        urgencyLevel,
+        matterId: body.matterId,
       },
     });
 

@@ -18,7 +18,7 @@ const createMatterSchema = z.object({
   clientContact: z.string().optional(),
   description: z.string().optional(),
   priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'URGENT']),
-  status: z.enum(['PENDING', 'ACTIVE', 'ON_HOLD', 'CLOSED']),
+  status: z.enum(['ACTIVE', 'FOR_PLEADING', 'UNDER_SUBMISSION', 'PROMULGATED', 'ARCHIVED']),
 });
 
 export default function NewMatterPage() {
@@ -145,10 +145,11 @@ export default function NewMatterPage() {
                 value={formData.status}
                 onChange={handleChange}
                 options={[
-                  { value: 'PENDING', label: 'Pending' },
                   { value: 'ACTIVE', label: 'Active' },
-                  { value: 'ON_HOLD', label: 'On Hold' },
-                  { value: 'CLOSED', label: 'Closed' },
+                  { value: 'FOR_PLEADING', label: 'For Pleading' },
+                  { value: 'UNDER_SUBMISSION', label: 'Under Submission' },
+                  { value: 'PROMULGATED', label: 'Promulgated / Decided' },
+                  { value: 'ARCHIVED', label: 'Archived' },
                 ]}
               />
 

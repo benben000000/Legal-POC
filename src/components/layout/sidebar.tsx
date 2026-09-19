@@ -11,6 +11,8 @@ const navigation = [
   { name: 'Deadlines', href: '/deadlines' },
   { name: 'Documents', href: '/documents' },
   { name: 'Billing', href: '/billing' },
+  { name: 'Team', href: '/team' },
+  { name: 'Audit Logs', href: '/audit-logs' },
 ];
 
 export function Sidebar() {

@@ -1,23 +1,20 @@
 import { requireAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { PageHeader } from '@/components/ui/page-header';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { EmptyState } from '@/components/ui/empty-state';
-import { format } from 'date-fns';
+import { BillingClient } from './billing-client';
 
 export default async function BillingPage() {
   const user = await requireAuth();
 
   // Redirect or show access denied if staff
   if (user.role === 'STAFF') {
-     return (
-       <div className="p-6 text-center">
-         <h2 className="text-xl font-bold text-red-600">Access Denied</h2>
-         <p className="mt-2 text-gray-600">Staff members do not have access to billing information.</p>
-       </div>
-     );
+    return (
+      <div className="p-8 text-center bg-white border border-gray-200 rounded-[4px]">
+        <h2 className="text-lg font-bold text-red-600">Access Restricted</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Staff accounts do not have permission to view firm financial and billing records.
+        </p>
+      </div>
+    );
   }
 
   const where = user.role === 'LEAD_ATTORNEY' ? {} : {
@@ -37,71 +34,37 @@ export default async function BillingPage() {
     orderBy: { datePerformed: 'desc' },
   });
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Billing Entries"
-        description="Track time and expenses across matters."
-      />
+  const matters = await prisma.matter.findMany({
+    where: user.role === 'LEAD_ATTORNEY' ? {} : {
+      OR: [
+        { createdById: user.id },
+        { members: { some: { userId: user.id } } },
+      ],
+    },
+    select: { id: true, caseTitle: true },
+    orderBy: { caseTitle: 'asc' },
+  });
 
-      <Card>
-        {entries.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Matter</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {entries.map((entry) => (
-                <TableRow key={entry.id}>
-                  <TableCell className="font-medium">{entry.title}</TableCell>
-                  <TableCell className="text-gray-600">
-                    {format(entry.datePerformed, 'MMM d, yyyy')}
-                  </TableCell>
-                  <TableCell className="text-gray-600">
-                    {entry.matter.caseTitle}
-                  </TableCell>
-                  <TableCell className="text-gray-900">
-                    {entry.description}
-                  </TableCell>
-                  <TableCell className="text-gray-600">
-                    {entry.billingType.includes('FEE') ? (
-                      entry.hours ? `${entry.hours.toString()} hrs` : '-'
-                    ) : (
-                      entry.billingType
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right font-medium text-gray-900">
-                    {new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(entry.amount.toNumber())}
-                  </TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={
-                        entry.paymentStatus === 'PAID' ? 'success' : 
-                        entry.paymentStatus === 'BILLED' ? 'info' : 'warning'
-                      }
-                    >
-                      {entry.paymentStatus}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <EmptyState
-            title="No billing entries"
-            description="No time or expenses have been recorded yet."
-          />
-        )}
-      </Card>
-    </div>
+  const serializedEntries = entries.map((entry) => ({
+    id: entry.id,
+    title: entry.title,
+    description: entry.description,
+    billingType: entry.billingType,
+    amount: entry.amount.toNumber(),
+    hours: entry.hours ? entry.hours.toNumber() : null,
+    hourlyRate: entry.hourlyRate ? entry.hourlyRate.toNumber() : null,
+    datePerformed: entry.datePerformed.toISOString(),
+    paymentStatus: entry.paymentStatus,
+    matterId: entry.matterId,
+    matter: { caseTitle: entry.matter.caseTitle },
+    user: entry.user ? { firstName: entry.user.firstName, lastName: entry.user.lastName } : null,
+  }));
+
+  return (
+    <BillingClient
+      entries={serializedEntries}
+      matters={matters}
+      userRole={user.role}
+    />
   );
 }
