@@ -10,12 +10,13 @@ import Link from 'next/link';
 export default async function MatterDetailsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const user = await requireAuth();
+  const { id } = await params;
   
   const matter = await prisma.matter.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       members: {
         include: { user: { select: { firstName: true, lastName: true } } }

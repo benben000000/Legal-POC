@@ -7,11 +7,11 @@ import { createAuditLog, getClientIp } from '@/lib/audit';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth();
-    const { id } = params;
+    const { id } = await params;
 
     const matter = await prisma.matter.findUnique({
       where: { id },
@@ -43,11 +43,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth();
-    const { id } = params;
+    const { id } = await params;
 
     // Check permission
     if (user.role === 'STAFF') {
@@ -115,11 +115,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth();
-    const { id } = params;
+    const { id } = await params;
 
     // Only lead attorneys can delete matters
     if (user.role !== 'LEAD_ATTORNEY') {
