@@ -14,16 +14,23 @@ export async function POST(request: NextRequest) {
       where: { token },
     });
 
-    if (!invitation || !invitation.isActive) {
+    if (!invitation) {
       return NextResponse.json(
-        { error: 'Invalid or expired invitation' },
+        { error: 'Invalid invitation link.' },
+        { status: 404 }
+      );
+    }
+
+    if (!invitation.isActive) {
+      return NextResponse.json(
+        { error: 'This invitation has already been accepted and cannot be reused.' },
         { status: 400 }
       );
     }
 
     if (new Date() > invitation.expiresAt) {
       return NextResponse.json(
-        { error: 'Invitation has expired' },
+        { error: 'This invitation link has expired. Official invitations strictly expire after 48 hours.' },
         { status: 400 }
       );
     }
