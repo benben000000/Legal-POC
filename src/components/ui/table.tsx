@@ -5,7 +5,7 @@ const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(
     <div className="w-full overflow-auto">
       <table
         ref={ref}
-        className={`w-full text-sm text-left text-slate-700 ${className}`}
+        className={`w-full text-sm text-left text-gray-700 ${className}`}
         {...props}
       >
         {children}
@@ -19,7 +19,7 @@ const TableHeader = forwardRef<HTMLTableSectionElement, HTMLAttributes<HTMLTable
   ({ className = '', children, ...props }, ref) => (
     <thead
       ref={ref}
-      className={`text-[11px] font-semibold text-slate-500 uppercase tracking-wider bg-slate-50/70 border-b border-slate-200/80 ${className}`}
+      className={`text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200 ${className}`}
       {...props}
     >
       {children}
@@ -32,7 +32,7 @@ const TableBody = forwardRef<HTMLTableSectionElement, HTMLAttributes<HTMLTableSe
   ({ className = '', children, ...props }, ref) => (
     <tbody
       ref={ref}
-      className={`divide-y divide-slate-100 bg-white ${className}`}
+      className={`divide-y divide-gray-200 bg-white ${className}`}
       {...props}
     >
       {children}
@@ -45,7 +45,7 @@ const TableRow = forwardRef<HTMLTableRowElement, HTMLAttributes<HTMLTableRowElem
   ({ className = '', children, ...props }, ref) => (
     <tr
       ref={ref}
-      className={`hover:bg-slate-50/80 transition-colors duration-100 ${className}`}
+      className={`hover:bg-gray-50 transition-colors duration-100 ${className}`}
       {...props}
     >
       {children}
@@ -58,7 +58,7 @@ const TableHead = forwardRef<HTMLTableCellElement, ThHTMLAttributes<HTMLTableCel
   ({ className = '', children, ...props }, ref) => (
     <th
       ref={ref}
-      className={`px-5 py-3.5 font-semibold text-slate-700 whitespace-nowrap ${className}`}
+      className={`px-4 py-3 font-medium text-gray-900 whitespace-nowrap ${className}`}
       {...props}
     >
       {children}
@@ -71,7 +71,7 @@ const TableCell = forwardRef<HTMLTableCellElement, TdHTMLAttributes<HTMLTableCel
   ({ className = '', children, ...props }, ref) => (
     <td
       ref={ref}
-      className={`px-5 py-3.5 text-slate-600 ${className}`}
+      className={`px-4 py-3 ${className}`}
       {...props}
     >
       {children}

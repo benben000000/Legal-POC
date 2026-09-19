@@ -49,10 +49,10 @@ async function run() {
   });
   console.log('   Status:', dashRes.statusCode);
   const hasLegalDemo = dashRes.body.includes('Legal Demo');
-  const hasChambers = dashRes.body.includes('Chambers Overview');
+  const hasDashboard = dashRes.body.includes('Dashboard');
   const hasPasigCase = dashRes.body.includes('Mabuhay Holdings');
   console.log('   Contains "Legal Demo":', hasLegalDemo);
-  console.log('   Contains "Chambers Overview":', hasChambers);
+  console.log('   Contains "Dashboard":', hasDashboard);
   console.log('   Contains "Mabuhay Holdings":', hasPasigCase);
 
   // 3. Fetch Tasks (/tasks)
@@ -61,10 +61,10 @@ async function run() {
     headers: { Cookie: cookie },
   });
   console.log('   Status:', tasksRes.statusCode);
-  const hasKanban = tasksRes.body.includes('Collaborative Workflow &amp; Kanban');
+  const hasTasks = tasksRes.body.includes('Tasks');
   const hasStages = tasksRes.body.includes('To Do') && tasksRes.body.includes('In Progress') && tasksRes.body.includes('Attorney Review') && tasksRes.body.includes('Completed / Filed');
   const hasTaskItem = tasksRes.body.includes('Draft Rule 37 Motion');
-  console.log('   Contains "Collaborative Workflow &amp; Kanban":', hasKanban);
+  console.log('   Contains "Tasks":', hasTasks);
   console.log('   Contains all 4 Kanban stages:', hasStages);
   console.log('   Contains seeded task "Draft Rule 37 Motion":', hasTaskItem);
 

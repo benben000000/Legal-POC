@@ -13,11 +13,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const helperId = helper ? `${inputId}-helper` : undefined;
 
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-1">
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-xs font-semibold text-slate-700 uppercase tracking-wider"
+            className="block text-sm font-medium text-gray-700"
           >
             {label}
           </label>
@@ -29,18 +29,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           aria-describedby={
             [errorId, helperId].filter(Boolean).join(' ') || undefined
           }
-          className={`block w-full px-3.5 py-2 text-sm text-slate-900 bg-white border rounded-lg placeholder-slate-400 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 disabled:bg-slate-50 disabled:text-slate-500 ${
-            error ? 'border-rose-500 focus:ring-rose-500/20' : 'border-slate-300/80 hover:border-slate-400/80'
+          className={`block w-full px-3 py-2 text-sm text-gray-900 bg-white border rounded-[4px] placeholder-gray-400 transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 disabled:bg-gray-50 disabled:text-gray-500 ${
+            error ? 'border-red-600' : 'border-gray-300'
           } ${className}`}
           {...props}
         />
         {error && (
-          <p id={errorId} className="text-xs text-rose-600 mt-1" role="alert">
+          <p id={errorId} className="text-sm text-red-600" role="alert">
             {error}
           </p>
         )}
         {helper && !error && (
-          <p id={helperId} className="text-xs text-slate-500 mt-1">
+          <p id={helperId} className="text-sm text-gray-500">
             {helper}
           </p>
         )}

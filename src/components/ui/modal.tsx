@@ -28,15 +28,15 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
     if (!isOpen) return null;
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
         <div 
-          className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs transition-opacity" 
+          className="fixed inset-0 bg-gray-900/40 transition-opacity duration-150" 
           onClick={onClose}
           aria-hidden="true"
         />
         <div 
           ref={ref}
-          className={`relative max-w-2xl mx-auto my-6 z-50 bg-white border border-slate-200/90 rounded-2xl shadow-xl flex flex-col w-full outline-none focus:outline-none animate-soft-in ${className}`}
+          className={`relative max-w-2xl mx-auto my-6 z-50 bg-white border border-gray-200 rounded-[4px] shadow-md flex flex-col w-full outline-none focus:outline-none ${className}`}
           role="dialog"
           aria-modal="true"
           {...props}
@@ -53,7 +53,7 @@ const ModalHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className = '', children, ...props }, ref) => (
     <div
       ref={ref}
-      className={`flex items-center justify-between px-6 py-4 border-b border-slate-100 rounded-t-2xl ${className}`}
+      className={`flex items-center justify-between p-4 border-b border-gray-200 rounded-t-[4px] ${className}`}
       {...props}
     >
       {children}
@@ -66,7 +66,7 @@ const ModalTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingElem
   ({ className = '', children, ...props }, ref) => (
     <h3
       ref={ref}
-      className={`text-lg font-semibold text-slate-900 tracking-tight ${className}`}
+      className={`text-lg font-medium text-gray-900 ${className}`}
       {...props}
     >
       {children}
@@ -79,7 +79,7 @@ const ModalBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className = '', children, ...props }, ref) => (
     <div
       ref={ref}
-      className={`relative px-6 py-5 flex-auto ${className}`}
+      className={`relative p-6 flex-auto ${className}`}
       {...props}
     >
       {children}
@@ -92,7 +92,7 @@ const ModalFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className = '', children, ...props }, ref) => (
     <div
       ref={ref}
-      className={`flex items-center justify-end px-6 py-4 border-t border-slate-100 rounded-b-2xl bg-slate-50/70 space-x-2.5 ${className}`}
+      className={`flex items-center justify-end p-4 border-t border-gray-200 rounded-b-[4px] bg-gray-50 space-x-2 ${className}`}
       {...props}
     >
       {children}

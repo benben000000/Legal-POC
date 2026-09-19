@@ -44,32 +44,24 @@ const STAGES = [
   { 
     id: 'TODO', 
     label: 'To Do', 
-    dotColor: 'bg-slate-400',
-    headerBg: 'bg-slate-50',
     next: 'IN_PROGRESS', 
     nextLabel: 'Start Progress' 
   },
   { 
     id: 'IN_PROGRESS', 
     label: 'In Progress', 
-    dotColor: 'bg-blue-500',
-    headerBg: 'bg-blue-50/50',
     next: 'FOR_ATTORNEY_REVIEW', 
     nextLabel: 'Send for Review' 
   },
   { 
     id: 'FOR_ATTORNEY_REVIEW', 
     label: 'Attorney Review', 
-    dotColor: 'bg-amber-500',
-    headerBg: 'bg-amber-50/50',
     next: 'COMPLETED_FILED', 
     nextLabel: 'Approve & File' 
   },
   { 
     id: 'COMPLETED_FILED', 
     label: 'Completed / Filed', 
-    dotColor: 'bg-emerald-500',
-    headerBg: 'bg-emerald-50/50',
     next: 'TODO', 
     nextLabel: 'Reopen' 
   },
@@ -92,7 +84,6 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
   }, [initialTasks]);
 
   const handleUpdateStatus = async (taskId: string, newStatus: TaskItem['status']) => {
-    // Find task
     const currentTask = tasks.find((t) => t.id === taskId);
     if (!currentTask || currentTask.status === newStatus) return;
 
@@ -118,7 +109,6 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
       router.refresh();
     } catch (err) {
       console.error(err);
-      // Revert on error
       setTasks(previousTasks);
       alert('Unable to move task. Please try again.');
     } finally {
@@ -147,7 +137,6 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>, stageId: string) => {
-    // Only reset if leaving the column container
     if (e.currentTarget.contains(e.relatedTarget as Node)) return;
     if (dragOverStage === stageId) {
       setDragOverStage(null);
@@ -168,30 +157,29 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Collaborative Workflow & Kanban"
-        description="Interactive 4-stage legal Kanban board. Drag and drop case items across stages for drafting handoffs, partner review, and court filing."
+        title="Tasks"
+        description="Collaborative 4-stage legal workflow for case delegation, drafting handoffs, and attorney review."
         action={
-          <div className="flex items-center space-x-3">
-            {/* View Switcher Pill */}
-            <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 shadow-xs">
+          <div className="flex items-center space-x-2">
+            <div className="inline-flex rounded-[4px] border border-gray-300 bg-white p-0.5">
               <button
                 type="button"
                 onClick={() => setViewMode('board')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-150 ${
+                className={`px-3 py-1 text-xs font-medium rounded-[2px] transition-colors duration-100 ${
                   viewMode === 'board'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                Kanban Board
+                Board View
               </button>
               <button
                 type="button"
                 onClick={() => setViewMode('table')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-150 ${
+                className={`px-3 py-1 text-xs font-medium rounded-[2px] transition-colors duration-100 ${
                   viewMode === 'table'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 Table View
@@ -199,14 +187,14 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
             </div>
 
             <Button onClick={() => setIsCreateOpen(true)} size="sm">
-              + New Task
+              New Task
             </Button>
           </div>
         }
       />
 
       {viewMode === 'board' ? (
-        /* 4-Stage Interactive Drag-and-Drop Kanban Board */
+        /* 4-Stage Kanban Board compliant with GEMINI.md */
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 select-none">
           {STAGES.map((stage) => {
             const stageTasks = tasks.filter((t) => t.status === stage.id);
@@ -218,26 +206,23 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
                 onDragOver={(e) => handleDragOver(e, stage.id)}
                 onDragLeave={(e) => handleDragLeave(e, stage.id)}
                 onDrop={(e) => handleDrop(e, stage.id as TaskItem['status'])}
-                className={`flex flex-col bg-slate-50/70 border rounded-2xl transition-all duration-200 min-h-[480px] ${
+                className={`flex flex-col bg-gray-50 border rounded-[4px] min-h-[460px] ${
                   isColumnActive
-                    ? 'kanban-column-active border-blue-400 bg-blue-50/60 ring-2 ring-blue-500/20'
-                    : 'border-slate-200/80 hover:border-slate-300/80'
+                    ? 'bg-gray-100 border-blue-600'
+                    : 'border-gray-200'
                 }`}
               >
                 {/* Column Header */}
-                <div className={`p-4 border-b border-slate-200/80 rounded-t-2xl flex items-center justify-between ${stage.headerBg}`}>
-                  <div className="flex items-center space-x-2">
-                    <span className={`w-2.5 h-2.5 rounded-full ${stage.dotColor}`}></span>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                      {stage.label}
-                    </h3>
-                  </div>
-                  <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-white border border-slate-200/80 text-slate-700 shadow-xs">
+                <div className="p-3 border-b border-gray-200 bg-white rounded-t-[4px] flex items-center justify-between">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-gray-700">
+                    {stage.label}
+                  </h3>
+                  <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-[4px] bg-gray-100 text-gray-700">
                     {stageTasks.length}
                   </span>
                 </div>
 
-                {/* Drop Zone & Task List */}
+                {/* Drop Zone & Task Cards */}
                 <div className="p-3 space-y-3 flex-1 overflow-y-auto">
                   {stageTasks.length > 0 ? (
                     stageTasks.map((task) => {
@@ -250,50 +235,44 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
                           draggable={true}
                           onDragStart={(e) => handleDragStart(e, task.id)}
                           onDragEnd={handleDragEnd}
-                          className={`group bg-white p-4 border border-slate-200/90 rounded-xl shadow-xs space-y-2.5 cursor-grab active:cursor-grabbing hover:border-slate-300 hover:shadow-sm transition-all duration-150 ${
-                            isDragging ? 'kanban-card-dragging' : ''
+                          className={`bg-white p-3 border border-gray-200 rounded-[4px] shadow-none space-y-2 hover:border-gray-400 transition-colors duration-100 cursor-grab active:cursor-grabbing ${
+                            isDragging ? 'opacity-50' : ''
                           } ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}
                         >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex items-center space-x-1.5">
-                              {/* Drag Grip Handle */}
-                              <span className="text-slate-300 group-hover:text-slate-500 text-xs select-none">
-                                ⠿
-                              </span>
-                              <Badge
-                                variant={
-                                  task.priority === 'CRITICAL'
-                                    ? 'error'
-                                    : task.priority === 'HIGH'
-                                    ? 'warning'
-                                    : 'neutral'
-                                }
-                              >
-                                {task.priority}
-                              </Badge>
-                            </div>
+                          <div className="flex items-start justify-between">
+                            <Badge
+                              variant={
+                                task.priority === 'CRITICAL'
+                                  ? 'error'
+                                  : task.priority === 'HIGH'
+                                  ? 'warning'
+                                  : 'neutral'
+                              }
+                            >
+                              {task.priority}
+                            </Badge>
 
                             {task.dueDate && (
-                              <span className="text-[11px] text-slate-500 font-mono">
-                                {format(new Date(task.dueDate), 'MMM d')}
+                              <span className="text-[11px] text-gray-500 font-mono">
+                                Due: {format(new Date(task.dueDate), 'MMM d')}
                               </span>
                             )}
                           </div>
 
-                          <h4 className="text-sm font-semibold text-slate-900 leading-snug">
+                          <h4 className="text-sm font-medium text-gray-900 leading-snug">
                             {task.title}
                           </h4>
 
                           {task.description && (
-                            <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                            <p className="text-xs text-gray-500 line-clamp-2">
                               {task.description}
                             </p>
                           )}
 
-                          <div className="text-xs text-slate-500 truncate pt-1">
+                          <div className="text-xs text-gray-500 truncate">
                             <Link
                               href={`/matters/${task.matterId}`}
-                              className="hover:underline text-blue-600 font-medium"
+                              className="hover:underline text-blue-600"
                               onClick={(e) => e.stopPropagation()}
                             >
                               {task.matter.caseTitle}
@@ -301,45 +280,28 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
                           </div>
 
                           {/* Footer with Assignee & Quick-Move Button */}
-                          <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
-                            <div className="flex items-center space-x-1.5 text-slate-600">
-                              <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-semibold text-[10px] flex items-center justify-center border border-slate-200">
-                                {task.assignee ? task.assignee.firstName[0] : '?'}
-                              </span>
-                              <span className="truncate max-w-[100px] text-[11px] font-medium">
-                                {task.assignee
-                                  ? `${task.assignee.firstName} ${task.assignee.lastName}`
-                                  : 'Unassigned'}
-                              </span>
-                            </div>
+                          <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-xs">
+                            <span className="text-gray-600 font-medium truncate max-w-[120px]">
+                              {task.assignee
+                                ? `${task.assignee.firstName} ${task.assignee.lastName}`
+                                : 'Unassigned'}
+                            </span>
 
                             <button
                               type="button"
                               disabled={isUpdating}
                               onClick={() => handleUpdateStatus(task.id, stage.next as TaskItem['status'])}
-                              className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline px-1.5 py-0.5 rounded hover:bg-blue-50 transition-colors"
-                              title={`Advance to ${stage.nextLabel}`}
+                              className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline"
                             >
-                              {isUpdating ? '...' : `${stage.nextLabel} \u2192`}
+                              {isUpdating ? 'Moving...' : `${stage.nextLabel} \u2192`}
                             </button>
                           </div>
                         </div>
                       );
                     })
                   ) : (
-                    <div
-                      className={`h-full min-h-[180px] flex flex-col items-center justify-center p-6 text-center text-xs rounded-xl border border-dashed transition-all duration-150 ${
-                        isColumnActive
-                          ? 'border-blue-400 bg-blue-50/50 text-blue-600 font-medium'
-                          : 'border-slate-200 text-slate-400'
-                      }`}
-                    >
-                      <span className="text-lg mb-1 opacity-70">
-                        {isColumnActive ? '📥' : '📂'}
-                      </span>
-                      <span>
-                        {isColumnActive ? `Release to move here` : `No tasks in ${stage.label.toLowerCase()}`}
-                      </span>
+                    <div className="h-full min-h-[160px] flex items-center justify-center p-6 text-center text-xs text-gray-400 border border-dashed border-gray-200 rounded-[4px]">
+                      {isColumnActive ? 'Drop task here' : `No tasks in ${stage.label.toLowerCase()}`}
                     </div>
                   )}
                 </div>
@@ -368,23 +330,23 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
                   const currentStage = STAGES.find((s) => s.id === task.status);
                   return (
                     <TableRow key={task.id}>
-                      <TableCell className="font-semibold text-slate-900">
+                      <TableCell className="font-medium text-gray-900">
                         {task.title}
                       </TableCell>
-                      <TableCell className="text-slate-600">
+                      <TableCell className="text-gray-600">
                         <Link
                           href={`/matters/${task.matterId}`}
-                          className="hover:underline text-blue-600 font-medium"
+                          className="hover:underline text-blue-600"
                         >
                           {task.matter.caseTitle}
                         </Link>
                       </TableCell>
-                      <TableCell className="text-slate-600 text-xs">
+                      <TableCell className="text-gray-600 text-xs">
                         {task.assignee
                           ? `${task.assignee.firstName} ${task.assignee.lastName}`
                           : 'Unassigned'}
                       </TableCell>
-                      <TableCell className="text-slate-600 text-xs font-mono">
+                      <TableCell className="text-gray-600 text-xs font-mono">
                         {task.dueDate ? format(new Date(task.dueDate), 'MMM d, yyyy') : '-'}
                       </TableCell>
                       <TableCell>
@@ -400,11 +362,8 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
                           {task.priority}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <span className="inline-flex items-center space-x-1.5 text-xs font-medium text-slate-700">
-                          <span className={`w-2 h-2 rounded-full ${currentStage?.dotColor || 'bg-slate-400'}`}></span>
-                          <span>{currentStage?.label || task.status}</span>
-                        </span>
+                      <TableCell className="text-xs text-gray-700">
+                        {currentStage?.label || task.status}
                       </TableCell>
                       <TableCell className="text-right">
                         {currentStage && (
@@ -412,7 +371,7 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
                             type="button"
                             disabled={updatingId === task.id}
                             onClick={() => handleUpdateStatus(task.id, currentStage.next as TaskItem['status'])}
-                            className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline"
+                            className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline"
                           >
                             {updatingId === task.id ? 'Moving...' : `${currentStage.nextLabel} \u2192`}
                           </button>
@@ -424,7 +383,7 @@ export function TasksClient({ tasks: initialTasks, matters, users }: TasksClient
               </TableBody>
             </Table>
           ) : (
-            <div className="p-8 text-center text-slate-500">
+            <div className="p-8 text-center text-gray-500">
               No tasks found. Click &ldquo;New Task&rdquo; above to create one.
             </div>
           )}

@@ -15,11 +15,11 @@ const PageHeader = forwardRef<HTMLDivElement, PageHeaderProps>(
         {...props}
       >
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
             {title}
           </h1>
           {description && (
-            <p className="mt-1 text-sm text-slate-500 max-w-3xl leading-relaxed">
+            <p className="mt-1 text-sm text-gray-500 max-w-3xl leading-relaxed">
               {description}
             </p>
           )}

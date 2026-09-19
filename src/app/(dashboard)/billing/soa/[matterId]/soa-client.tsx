@@ -60,7 +60,7 @@ export function SOAClient({ matter }: SOAClientProps) {
       </div>
 
       {/* Printable Statement of Account Letterhead Document */}
-      <div className="bg-white p-8 sm:p-12 border border-gray-200 rounded-[4px] shadow-sm max-w-4xl mx-auto print:border-0 print:p-0 print:shadow-none text-gray-900 font-sans">
+      <div className="bg-white p-8 sm:p-12 border border-gray-200 rounded-[4px] shadow-none max-w-4xl mx-auto print:border-0 print:p-0 print:shadow-none text-gray-900 font-sans">
         {/* Law Firm Header */}
         <div className="text-center pb-6 border-b-2 border-gray-900">
           <h1 className="text-2xl font-bold tracking-tight uppercase text-gray-900">
