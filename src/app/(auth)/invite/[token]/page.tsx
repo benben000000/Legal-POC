@@ -178,8 +178,8 @@ export default function AcceptInvitePage({
   if (tokenStatus === 'EXPIRED') {
     return (
       <div className="text-center space-y-5">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 border border-amber-200">
-          <svg className="h-7 w-7 text-amber-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[4px] bg-amber-50 border border-amber-200">
+          <svg className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
@@ -194,7 +194,7 @@ export default function AcceptInvitePage({
           </p>
         </div>
 
-        <div className="bg-amber-50/80 border border-amber-200 rounded-lg p-3.5 text-left text-xs text-amber-900 space-y-1">
+        <div className="bg-amber-50/80 border border-amber-200 rounded-[4px] p-3.5 text-left text-xs text-amber-900 space-y-1">
           <p className="font-semibold">Security Compliance Notice:</p>
           <p className="text-amber-800 leading-relaxed">
             For security and Philippine data confidentiality compliance, team invitations are strictly valid for <strong>48 hours</strong>.
@@ -217,8 +217,8 @@ export default function AcceptInvitePage({
   if (tokenStatus === 'ALREADY_ACCEPTED') {
     return (
       <div className="text-center space-y-5">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 border border-blue-200">
-          <svg className="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[4px] bg-blue-50 border border-blue-200">
+          <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
@@ -244,8 +244,8 @@ export default function AcceptInvitePage({
   if (tokenStatus === 'NOT_FOUND') {
     return (
       <div className="text-center space-y-5">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50 border border-red-200">
-          <svg className="h-7 w-7 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[4px] bg-red-50 border border-red-200">
+          <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
           </svg>
         </div>
@@ -272,7 +272,7 @@ export default function AcceptInvitePage({
   return (
     <div>
       <div className="text-center mb-6 space-y-1.5">
-        <div className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+        <div className="inline-flex items-center px-2.5 py-1 rounded-[2px] text-[11px] font-semibold bg-gray-100 text-gray-800 border border-gray-300">
           Role: {getRoleBadge(inviteDetails?.role)}
         </div>
         <h3 className="text-lg font-semibold text-gray-900">Complete Your Registration</h3>
@@ -289,7 +289,7 @@ export default function AcceptInvitePage({
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         {submitError && (
-          <div className="bg-red-50 border-l-4 border-red-600 p-3.5 rounded-r-md">
+          <div className="bg-red-50 border-l-4 border-red-600 p-3.5 rounded-[2px]">
             <div className="flex">
               <div className="flex-shrink-0">
                 <svg className="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor">

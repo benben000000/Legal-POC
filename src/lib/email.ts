@@ -51,6 +51,48 @@ function formatExpiration(date: Date): string {
   }).format(date);
 }
 
+function generateInvitationText(params: SendInvitationParams): string {
+  const { to, role, inviteLink, expiresAt, invitedByName } = params;
+  const roleLabel = getRoleLabel(role);
+  const entitlements = getRoleEntitlements(role);
+  const formattedExpiry = formatExpiration(expiresAt);
+  const inviter = invitedByName || 'Atty. Benedict Garcia (Managing Partner)';
+  const currentYear = new Date().getFullYear();
+
+  return `GARCIA LAW OFFICES
+Makati & Pasig Chambers • Republic of the Philippines
+
+OFFICIAL WORKSPACE INVITATION
+
+Dear Colleague,
+
+You have been formally invited by ${inviter} to join the firm's central practice platform. Your profile has been pre-configured with the following official assignment:
+
+- Invited Email: ${to}
+- Designation: ${roleLabel}
+- Authorized By: ${inviter}
+- Access Scope: ${entitlements}
+
+To activate your account and establish your credentials, navigate to the secure link below:
+${inviteLink}
+
+STRICT 48-HOUR SECURITY EXPIRATION NOTICE:
+In accordance with Philippine Bar regulations and firm data protection policies, this activation link will permanently expire on ${formattedExpiry}. Expired links are automatically revoked and cannot be renewed without re-authorization from the Managing Partner.
+
+QUICK SETUP STEPS:
+1. Open the activation link above in your browser.
+2. Confirm your legal name and establish an enterprise-grade password (minimum 12 characters, uppercase, lowercase, number, special character).
+3. Access the firm dashboard to immediately review your assigned matters and docket schedule.
+
+---
+ATTORNEY-CLIENT PRIVILEGE & CONFIDENTIALITY NOTICE:
+This electronic transmission contains confidential and legally privileged information intended solely for the designated recipient. If you received this transmission in error, please immediately notify the sender by reply and delete this email without copying, distributing, or disclosing its contents.
+
+© ${currentYear} Garcia Law Offices. Makati Chambers: Ayala Avenue, Makati City • Pasig Chambers: Ortigas Center, Pasig City.
+Practice Management System • Fully compliant with Republic Act No. 10173 (Philippine Data Privacy Act of 2012).
+`;
+}
+
 function generateInvitationHtml(params: SendInvitationParams): string {
   const { to, role, inviteLink, expiresAt, invitedByName } = params;
   const roleLabel = getRoleLabel(role);
@@ -59,51 +101,44 @@ function generateInvitationHtml(params: SendInvitationParams): string {
   const inviter = invitedByName || 'Atty. Benedict Garcia (Managing Partner)';
   const currentYear = new Date().getFullYear();
 
-  return `
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Official Firm Invitation • Garcia Law Offices</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #0f172a;">
+<body style="margin: 0; padding: 0; background-color: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #111827;">
   
-  <!-- Inbox Snippet Preview Text -->
-  <div style="display: none; font-size: 1px; color: #ffffff; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
-    Official invitation from ${inviter} to join Garcia Law Offices as ${roleLabel}. Access active case matters, deadlines, and docket pipeline.
-  </div>
-
-  <!-- Main Outer Wrapper -->
-  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f1f5f9; padding: 36px 12px 48px 12px;">
+  <!-- Outer Table Container -->
+  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; padding: 32px 12px 48px 12px;">
     <tr>
       <td align="center">
         
-        <!-- Email Container Card -->
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);">
+        <!-- Main Email Card: Strictly <= 4px radius, no box shadow, solid border -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 4px; overflow: hidden;">
           
-          <!-- Top Accent Trim -->
+          <!-- Solid Primary Accent Bar (No Gradients) -->
           <tr>
-            <td height="4" style="background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);"></td>
+            <td height="3" style="background-color: #2563eb; font-size: 1px; line-height: 1px;">&nbsp;</td>
           </tr>
 
-          <!-- Executive Header -->
+          <!-- Header: Deep Slate Surface with Minimal Monogram -->
           <tr>
-            <td style="background-color: #0f172a; padding: 32px 36px; text-align: left;">
+            <td style="background-color: #111827; padding: 24px 28px; text-align: left;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td>
-                    <!-- Monogram Emblem -->
                     <table border="0" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td align="center" width="44" height="44" style="background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; color: #60a5fa; font-size: 18px; font-weight: 700; letter-spacing: 1px;">
+                        <td align="center" width="36" height="36" style="background-color: #1f2937; border: 1px solid #374151; border-radius: 2px; color: #ffffff; font-size: 13px; font-weight: 700; letter-spacing: 0.5px;">
                           GLO
                         </td>
-                        <td style="padding-left: 16px;">
-                          <h1 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: 1.2px; color: #ffffff; text-transform: uppercase;">
+                        <td style="padding-left: 14px;">
+                          <h1 style="margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; color: #ffffff; text-transform: uppercase;">
                             GARCIA LAW OFFICES
                           </h1>
-                          <p style="margin: 3px 0 0 0; font-size: 11px; font-weight: 500; letter-spacing: 0.8px; color: #94a3b8; text-transform: uppercase;">
+                          <p style="margin: 2px 0 0 0; font-size: 11px; font-weight: 400; color: #9ca3af;">
                             Makati & Pasig Chambers • Republic of the Philippines
                           </p>
                         </td>
@@ -111,8 +146,8 @@ function generateInvitationHtml(params: SendInvitationParams): string {
                     </table>
                   </td>
                   <td align="right" style="vertical-align: middle;">
-                    <span style="display: inline-block; background-color: rgba(37, 99, 235, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); color: #93c5fd; font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;">
-                      Practice Cloud
+                    <span style="display: inline-block; border: 1px solid #374151; border-radius: 2px; color: #9ca3af; font-size: 10px; font-weight: 500; padding: 2px 6px; letter-spacing: 0.5px; text-transform: uppercase;">
+                      PRACTICE MANAGEMENT
                     </span>
                   </td>
                 </tr>
@@ -122,55 +157,52 @@ function generateInvitationHtml(params: SendInvitationParams): string {
 
           <!-- Content Body -->
           <tr>
-            <td style="padding: 36px 36px 28px 36px;">
+            <td style="padding: 28px 28px 20px 28px;">
               
-              <!-- Greeting & Invitation Memo -->
-              <h2 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.3px;">
+              <h2 style="margin: 0 0 12px 0; font-size: 18px; font-weight: 700; color: #111827; letter-spacing: -0.2px;">
                 Official Workspace Invitation
               </h2>
-              <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6; color: #334155;">
+              <p style="margin: 0 0 14px 0; font-size: 14px; line-height: 1.6; color: #374151;">
                 Dear Colleague,
               </p>
-              <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #334155;">
-                You have been formally invited by <strong>${inviter}</strong> to join the firm's central practice platform. Your profile has been pre-configured with the following official assignment:
+              <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6; color: #374151;">
+                You have been formally invited by <strong style="color: #111827;">${inviter}</strong> to join the firm's central practice platform. Your profile has been pre-configured with the following official assignment:
               </p>
 
-              <!-- Assignment Credentials Card -->
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 28px;">
+              <!-- Assignment Table: Minimal Borders, No Glowing Pills -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 2px; margin-bottom: 24px;">
                 <tr>
-                  <td style="padding: 18px 20px;">
+                  <td style="padding: 14px 16px;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
-                        <td width="35%" style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 8px;">
+                        <td width="32%" style="font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb;">
                           Invited Email
                         </td>
-                        <td width="65%" style="font-size: 13px; font-weight: 600; color: #0f172a; padding-bottom: 8px;">
+                        <td width="68%" style="font-size: 13px; font-weight: 500; color: #111827; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb;">
                           ${to}
                         </td>
                       </tr>
                       <tr>
-                        <td style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 8px;">
+                        <td style="font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; padding-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb;">
                           Designation
                         </td>
-                        <td style="padding-bottom: 8px;">
-                          <span style="display: inline-block; background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                            ${roleLabel}
-                          </span>
+                        <td style="padding-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb; font-size: 13px; font-weight: 600; color: #111827;">
+                          ${roleLabel}
                         </td>
                       </tr>
                       <tr>
-                        <td style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 8px;">
+                        <td style="font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; padding-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb;">
                           Authorized By
                         </td>
-                        <td style="font-size: 13px; font-weight: 500; color: #334155; padding-bottom: 8px;">
+                        <td style="font-size: 13px; font-weight: 500; color: #111827; padding-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb;">
                           ${inviter}
                         </td>
                       </tr>
                       <tr>
-                        <td style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">
+                        <td style="font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; padding-top: 10px;">
                           Access Scope
                         </td>
-                        <td style="font-size: 12px; font-weight: 400; color: #475569; line-height: 1.4;">
+                        <td style="font-size: 12px; font-weight: 400; color: #4b5563; line-height: 1.4; padding-top: 10px;">
                           ${entitlements}
                         </td>
                       </tr>
@@ -179,15 +211,15 @@ function generateInvitationHtml(params: SendInvitationParams): string {
                 </tr>
               </table>
 
-              <!-- Action Button CTA -->
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 28px 0;">
+              <!-- Action Button: Professional, Flat, Border Radius 2px, No Drop Shadow -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 24px 0;">
                 <tr>
                   <td align="center">
                     <table border="0" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td align="center" style="background-color: #2563eb; border-radius: 6px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
-                          <a href="${inviteLink}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 14px 34px; font-size: 14px; font-weight: 600; color: #ffffff !important; text-decoration: none; letter-spacing: 0.3px;">
-                            Accept Invitation & Set Up Account &rarr;
+                        <td align="center" style="background-color: #2563eb; border: 1px solid #1d4ed8; border-radius: 2px;">
+                          <a href="${inviteLink}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 12px 30px; font-size: 14px; font-weight: 600; color: #ffffff !important; text-decoration: none; letter-spacing: 0.2px;">
+                            Accept Invitation & Set Up Account
                           </a>
                         </td>
                       </tr>
@@ -196,19 +228,19 @@ function generateInvitationHtml(params: SendInvitationParams): string {
                 </tr>
               </table>
 
-              <!-- 48-Hour Expiration Warning Banner -->
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #d97706; border-radius: 6px; margin-bottom: 24px;">
+              <!-- 48-Hour Security Expiration Callout: Flat, Left Accent Border, No Shadows -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-left: 3px solid #d97706; border-radius: 2px; margin-bottom: 20px;">
                 <tr>
-                  <td style="padding: 14px 18px;">
+                  <td style="padding: 12px 16px;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
-                        <td style="font-size: 12px; font-weight: 700; color: #92400e; padding-bottom: 3px;">
+                        <td style="font-size: 12px; font-weight: 600; color: #92400e; padding-bottom: 3px;">
                           Strict 48-Hour Security Expiration Notice
                         </td>
                       </tr>
                       <tr>
-                        <td style="font-size: 12px; color: #b45309; line-height: 1.5;">
-                          In accordance with Philippine Bar and firm data protection policies, this activation link will permanently expire on <strong>${formattedExpiry}</strong>. Expired links are automatically revoked and cannot be renewed without re-authorization from the Managing Partner.
+                        <td style="font-size: 12px; color: #78350f; line-height: 1.5;">
+                          In accordance with Philippine Bar regulations and firm data protection policies, this activation link will permanently expire on <strong>${formattedExpiry}</strong>. Expired links are automatically revoked and cannot be renewed without re-authorization from the Managing Partner.
                         </td>
                       </tr>
                     </table>
@@ -216,32 +248,32 @@ function generateInvitationHtml(params: SendInvitationParams): string {
                 </tr>
               </table>
 
-              <!-- Onboarding Roadmap -->
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 24px;">
+              <!-- Setup Steps -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 20px;">
                 <tr>
-                  <td style="font-size: 12px; font-weight: 700; color: #0f172a; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                  <td style="font-size: 11px; font-weight: 600; color: #111827; padding-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
                     Quick Setup Steps
                   </td>
                 </tr>
                 <tr>
-                  <td style="font-size: 12px; color: #475569; line-height: 1.6;">
-                    <strong>1.</strong> Click the activation button above to open the secure registration portal.<br/>
-                    <strong>2.</strong> Confirm your legal name and establish a password meeting enterprise criteria.<br/>
-                    <strong>3.</strong> Enter the firm dashboard to immediately access your assigned matters and cogwheel task board.
+                  <td style="font-size: 12px; color: #4b5563; line-height: 1.6;">
+                    1. Click the activation button above to open the secure registration portal.<br/>
+                    2. Confirm your legal name and establish a password meeting enterprise security requirements.<br/>
+                    3. Enter the firm dashboard to immediately access your assigned matters and docket schedule.
                   </td>
                 </tr>
               </table>
 
-              <!-- Plain Text Fallback Link -->
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-top: 1px dashed #e2e8f0; padding-top: 18px;">
+              <!-- Fallback Link: Verifiable Direct Link -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-top: 1px solid #e5e7eb; padding-top: 16px;">
                 <tr>
-                  <td style="font-size: 11px; color: #64748b; padding-bottom: 6px;">
+                  <td style="font-size: 11px; color: #6b7280; padding-bottom: 6px;">
                     Button not working? Copy and paste this exact link directly into your browser:
                   </td>
                 </tr>
                 <tr>
-                  <td style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 10px 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; color: #334155; word-break: break-all;">
-                    <a href="${inviteLink}" style="color: #2563eb; text-decoration: none;">${inviteLink}</a>
+                  <td style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 2px; padding: 8px 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; word-break: break-all;">
+                    <a href="${inviteLink}" style="color: #2563eb; text-decoration: underline;">${inviteLink}</a>
                   </td>
                 </tr>
               </table>
@@ -251,13 +283,13 @@ function generateInvitationHtml(params: SendInvitationParams): string {
 
           <!-- Legal & Privacy Footer -->
           <tr>
-            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 24px 36px; text-align: left;">
-              <p style="margin: 0 0 10px 0; font-size: 10px; line-height: 1.5; color: #64748b; font-weight: 500;">
+            <td style="background-color: #f9fafb; border-top: 1px solid #e5e7eb; padding: 20px 28px; text-align: left;">
+              <p style="margin: 0 0 8px 0; font-size: 10px; line-height: 1.5; color: #6b7280;">
                 <strong>ATTORNEY-CLIENT PRIVILEGE & CONFIDENTIALITY NOTICE:</strong> This electronic transmission contains confidential and legally privileged information intended solely for the designated recipient. If you received this transmission in error, please immediately notify the sender by reply and delete this email without copying, distributing, or disclosing its contents.
               </p>
               <p style="margin: 0; font-size: 10px; line-height: 1.5; color: #94a3b8;">
                 © ${currentYear} Garcia Law Offices. Makati Chambers: Ayala Avenue, Makati City • Pasig Chambers: Ortigas Center, Pasig City.<br/>
-                Practice Cloud v2.0 • Fully compliant with Republic Act No. 10173 (Philippine Data Privacy Act of 2012).
+                Practice Management System • Fully compliant with Republic Act No. 10173 (Philippine Data Privacy Act of 2012).
               </p>
             </td>
           </tr>
@@ -270,8 +302,7 @@ function generateInvitationHtml(params: SendInvitationParams): string {
   </table>
 
 </body>
-</html>
-  `;
+</html>`;
 }
 
 export async function sendInvitationEmail(params: SendInvitationParams): Promise<EmailResult> {
@@ -279,6 +310,15 @@ export async function sendInvitationEmail(params: SendInvitationParams): Promise
   const roleLabel = getRoleLabel(role);
   const subject = `Official Invitation: Join Garcia Law Offices as ${roleLabel}`;
   const html = generateInvitationHtml(params);
+  const text = generateInvitationText(params);
+
+  // RFC Headers to ensure delivery to primary inbox and high priority / importance marking
+  const emailHeaders = {
+    'X-Priority': '1',
+    'X-MSMail-Priority': 'High',
+    'Importance': 'high',
+    'Priority': 'urgent',
+  };
 
   // 1. Check for Resend API Key (Priority 1: Recommended for Next.js / Vercel)
   if (process.env.RESEND_API_KEY) {
@@ -295,6 +335,8 @@ export async function sendInvitationEmail(params: SendInvitationParams): Promise
           to: [to],
           subject,
           html,
+          text,
+          headers: emailHeaders,
         }),
       });
 
@@ -333,7 +375,10 @@ export async function sendInvitationEmail(params: SendInvitationParams): Promise
         from: fromEmail,
         to,
         subject,
+        text,
         html,
+        priority: 'high',
+        headers: emailHeaders,
       });
 
       return {
@@ -365,3 +410,4 @@ export async function sendInvitationEmail(params: SendInvitationParams): Promise
     message: `Invitation generated! To deliver automated emails, configure RESEND_API_KEY or SMTP in your environment variables.`,
   };
 }
+
